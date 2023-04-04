@@ -1,5 +1,5 @@
 import { HttpModule, HttpService } from '@nestjs/axios';
-import { Logger, Module } from '@nestjs/common';
+import { Global, Logger, Module } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { genEndpoint } from 'src/utils';
 
@@ -29,4 +29,5 @@ import { genEndpoint } from 'src/utils';
   ],
   exports: ['MOODLE_MODULE'],
 })
+@Global()
 export class MoodleModule {}

@@ -14,6 +14,7 @@ async function bootstrap() {
       url: 'localhost:5001',
       package: 'third_party_service',
       protoPath: join(__dirname, './third-party-service.proto'),
+      loader: { keepCase: true },
     },
   });
   app.enableShutdownHooks();

@@ -4,11 +4,13 @@ import { MoodleModule } from './moodle/moodle.module';
 import { UsersModule } from './users/users.module';
 import { AppService } from './app.service';
 import { HttpModule } from '@nestjs/axios';
+import { CoursesModule } from './courses/course.module';
 
 @Module({
   imports: [
     MoodleModule,
     UsersModule,
+    CoursesModule,
     {
       ...HttpModule.register({
         baseURL: process.env.MOODLE_BASE_URL,
@@ -19,13 +21,6 @@ import { HttpModule } from '@nestjs/axios';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: HttpService,
-    //   useFactory: (token: string) => {
-    //     console.log({ token });
-    //   },
-    //   inject: [{ token: 'MOODLE_MODULE', optional: false }],
-    // },
   ],
   exports: [MoodleModule],
 })
