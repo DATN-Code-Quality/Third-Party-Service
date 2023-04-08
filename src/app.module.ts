@@ -9,6 +9,7 @@ import { IssuesModule } from './sonarqube/issue/issues.module';
 import { ProjectModule } from './project/project.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectDto } from './project/req/project.dto';
+import { SourcesModule } from './sonarqube/source/sources.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ProjectDto } from './project/req/project.dto';
     //   },
     IssuesModule,
     ProjectModule,
+    SourcesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
