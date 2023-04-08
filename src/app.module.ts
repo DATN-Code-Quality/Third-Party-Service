@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { HttpModule } from '@nestjs/axios';
 import { CoursesModule } from './courses/course.module';
 import { IssuesModule } from './sonarqube/issue/issues.module';
+import { SourceModule } from './sonarqube/source/source.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { IssuesModule } from './sonarqube/issue/issues.module';
     //     global: true,
     //   },
     IssuesModule,
+    SourceModule
   ],
   controllers: [AppController],
   providers: [AppService],
