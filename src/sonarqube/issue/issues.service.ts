@@ -3,16 +3,29 @@ import { Inject, Injectable } from '@nestjs/common';
 import { firstValueFrom, map } from 'rxjs';
 import { moodleArrayInput } from 'src/utils';
 import { Issue, IssueSonarqubeDTO } from '../issue/interfaces/Issue';
+import { ProjectService } from 'src/project/project.service';
 
 @Injectable()
 export class IssuesService {
   constructor(
     // @Inject('MOODLE_MODULE') private readonly token: string,
     private readonly httpService: HttpService,
+    private readonly projectService: ProjectService,
   ) {}
 
-  async getIssuesByKey(key: string): Promise<Issue> {
-    // console.log('service: ' + key);
+  async getIssuesBySubmissionId(
+    submissionId: string,
+    type: string,
+    page: number,
+    pageSize: number,
+  ): Promise<Issue> {
+    const project = await this.projectService.findProjectBySubmissionId(
+      submissionId,
+    );
+    if (project == null) {
+      return null;
+    }
+
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.SONARQUBE_BASE_URL}/issues/search`, {
@@ -20,7 +33,12 @@ export class IssuesService {
             username: process.env.SONARQUBE_USERNAME,
             password: process.env.SONARQUBE_PASSWORD,
           },
-          params: { componentKeys: key },
+          params: {
+            componentKeys: project.key,
+            types: type,
+            p: page,
+            ps: pageSize,
+          },
         })
         .pipe(),
     );

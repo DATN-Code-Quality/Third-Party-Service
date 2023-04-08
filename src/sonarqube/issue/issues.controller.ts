@@ -8,13 +8,26 @@ import { IssuesService } from './issues.service';
 export class IssuesController {
   constructor(private readonly issueService: IssuesService) {}
 
-  @GrpcMethod('IssueService', 'getIssuesByKey')
-  async getIssuesByKey(
+  @GrpcMethod('IssueService', 'getIssuesBySubmissionId')
+  async getIssuesBySubmissionId(
     data: IssueRequest,
     meta: Metadata,
   ): Promise<IssueResponse> {
+    const result = await this.issueService.getIssuesBySubmissionId(
+      data.submissionId,
+      data.type,
+      data.page,
+      data.pageSize,
+    );
+
+    if (result == null) {
+      return {
+        issues: null,
+        error: 1,
+      };
+    }
     return {
-      issues: await this.issueService.getIssuesByKey(data.key),
+      issues: result,
       error: 0,
     };
   }
