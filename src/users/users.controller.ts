@@ -20,4 +20,11 @@ export class UsersController {
       error: 0,
     };
   }
+  @GrpcMethod('UserService', 'GetAllUsers')
+  async getAllUsers(meta: Metadata): Promise<UserResponse> {
+    return {
+      users: await this.userService.getAllUsers(),
+      error: 0,
+    };
+  }
 }
