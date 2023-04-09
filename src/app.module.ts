@@ -10,6 +10,8 @@ import { ProjectModule } from './project/project.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectDto } from './project/req/project.dto';
 import { SourcesModule } from './sonarqube/source/sources.module';
+import { TemporlClientModule } from './temporal/client.module';
+import { SubmissionsModule } from './submissions/submission.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { SourcesModule } from './sonarqube/source/sources.module';
     IssuesModule,
     ProjectModule,
     SourcesModule,
+    TemporlClientModule,
+    SubmissionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
