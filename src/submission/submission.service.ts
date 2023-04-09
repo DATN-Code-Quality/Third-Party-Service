@@ -26,6 +26,7 @@ export class SubmissionService {
         })
         .pipe(),
     );
+    console.log(data?.assignments[0].submissions);
     // const dataSubmission = data?.assignments[0].submissions;
 
     // if (dataSubmission && dataSubmission.length > 0) {

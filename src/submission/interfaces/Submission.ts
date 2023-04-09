@@ -15,6 +15,6 @@ export interface SubmissionResponce {
   submissions: Submission[];
 }
 
-export interface GetAssignmentsOfAssignmentMoodleIdRequest {
+export interface GetSubmissionsOfAssignmentMoodleIdRequest {
   assignmentMoodleId: string;
 }
