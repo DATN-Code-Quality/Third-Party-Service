@@ -26,22 +26,25 @@ export class SubmissionService {
         })
         .pipe(),
     );
-    console.log(data?.assignments[0].submissions);
-    // const dataSubmission = data?.assignments[0].submissions;
+    const dataSubmission = data?.assignments[0].submissions;
 
-    // if (dataSubmission && dataSubmission.length > 0) {
-    //   return dataSubmission.map((item: any) => ({
-    //     assignmentId: data.assignments[0].assignmentid,
-    //     link: '',
-    //     note: string | null,
-    //     submitType: string,
-    //     userId: item.userid,
-    //     origin: string,
-    //     status: item.status,
-    //     grade: number | null,
-    //     submissionMoodleId: item.id,
-    //   }));
-    // }
+    if (dataSubmission && dataSubmission.length > 0) {
+      return dataSubmission.map((item: any) => ({
+        assignmentId: data.assignments[0].assignmentid,
+        //Hiện tại là lấy submission mới nhất
+        link:
+          item.plugins[0].fileareas[0].files[
+            item.plugins[0].fileareas[0].files.length - 1
+          ]?.fileurl || '',
+        note: item.status,
+        submitType: item.plugins[0].type,
+        userId: item.userid,
+        origin: '',
+        status: item.status,
+        grade: null,
+        submissionMoodleId: item.id,
+      }));
+    }
 
     return [];
   }
