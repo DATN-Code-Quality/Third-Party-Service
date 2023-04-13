@@ -30,7 +30,7 @@ export class SubmissionService {
 
     if (dataSubmission && dataSubmission.length > 0) {
       return dataSubmission.map((item: any) => ({
-        assignmentId: data.assignments[0].assignmentid,
+        assignmentId: '',
         //Hiện tại là lấy submission mới nhất
         link:
           item.plugins[0].fileareas[0].files[
