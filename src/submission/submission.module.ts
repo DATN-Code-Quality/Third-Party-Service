@@ -7,4 +7,4 @@ import { SubmissionController } from './submission.controller';
   controllers: [SubmissionController],
   providers: [SubmissionService],
 })
-export class CoursesModule {}
+export class SubmissionsModule {}

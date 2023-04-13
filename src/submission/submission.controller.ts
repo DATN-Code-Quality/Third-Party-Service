@@ -3,7 +3,7 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { SubmissionService } from './submission.service';
 import {
-  GetAssignmentsOfAssignmentMoodleIdRequest,
+  GetSubmissionsOfAssignmentMoodleIdRequest,
   SubmissionResponce,
 } from './interfaces/Submission';
 
@@ -12,7 +12,7 @@ export class SubmissionController {
   constructor(private readonly service: SubmissionService) {}
   @GrpcMethod('SubmissionService', 'GetSubmissionsByAssignmentId')
   async getSubmissionsByAssignmentId(
-    data: GetAssignmentsOfAssignmentMoodleIdRequest,
+    data: GetSubmissionsOfAssignmentMoodleIdRequest,
     meta: Metadata,
   ): Promise<SubmissionResponce> {
     const submissions = await this.service.getSubmissionsByAssignmentId(

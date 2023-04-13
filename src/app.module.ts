@@ -7,6 +7,7 @@ import { HttpModule } from '@nestjs/axios';
 import { CoursesModule } from './courses/course.module';
 import { CategoryModule } from './courses/category/category.module';
 import { AssignmentModule } from './assignment/assignment.module';
+import { SubmissionsModule } from './submission/submission.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AssignmentModule } from './assignment/assignment.module';
     UsersModule,
     CoursesModule,
     CategoryModule,
+    SubmissionsModule,
     AssignmentModule,
     {
       ...HttpModule.register({
