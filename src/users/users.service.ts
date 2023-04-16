@@ -30,7 +30,7 @@ export class UsersService {
         name: item.fullname,
         role: '',
         email: item.email,
-        userId: '',
+        userId: item.username,
         moodleId: item.id,
         password: '',
         status: false,
@@ -53,12 +53,13 @@ export class UsersService {
         })
         .pipe(),
     );
+
     if (data && data.users.length > 0) {
       return data.users.map((item: UserMoodelDTO) => ({
         name: item.fullname,
         role: '',
         email: item.email,
-        userId: '',
+        userId: item.username,
         moodleId: item.id,
         password: '',
         status: false,
