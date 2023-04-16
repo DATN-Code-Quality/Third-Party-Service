@@ -58,8 +58,6 @@ export class SchedulerService {
             assignmentId,
           );
 
-        Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
-
         // step 2: filter out old submissions
         // submissions = submissions.filter(
         //   (submission) =>
@@ -67,28 +65,33 @@ export class SchedulerService {
         //     new Date().getTime() / 1000 - 60 * minutes,
         // );
 
-        // step 3: save to db
-        const savedSubmissions = submissions.map(async (submission) => {
+        submissions.map(async (submission) => {
           const submissionResDto =
             await this.submissionDBService.findSubmissionWithMoodleId(
               submission.submissionMoodleId,
             );
-          if (submissionResDto) {
-            return this.submissionDBService.update(
+
+          Logger.debug(`submissionResDto: ${JSON.stringify(submissionResDto)}`);
+
+          // step 3: save to db
+          let ret = null;
+          if (submissionResDto.data !== null) {
+            ret = await this.submissionDBService.update(
               submissionResDto.data.id,
               submission as any,
             );
-          } else {
-            return this.submissionDBService.create(
-              SubmissionReqDto,
-              submission as any,
-            );
           }
-        });
 
-        // step 4: send to scanner
-        savedSubmissions.forEach((submission) => {
-          this.submissionService.scanCodes(submission as any);
+          ret = await this.submissionDBService.create(
+            SubmissionReqDto,
+            submission as any,
+          );
+
+          Logger.debug(`savedSubmissions: ${JSON.stringify(ret)}`);
+          // step 4: send to scanner
+          this.submissionService.scanCodes(ret);
+
+          return ret;
         });
 
         // step 5: send result
@@ -109,7 +112,18 @@ export class SchedulerService {
       // send notif / assignment stats to teacher
     };
 
-    const timeout = setTimeout(callback, milliseconds);
+    let timeout = null;
+
+    try {
+      timeout = this.schedulerRegistry.getTimeout(timeoutJob);
+    } catch (error) {}
+
+    if (timeout) {
+      clearTimeout(timeout);
+      this.schedulerRegistry.deleteTimeout(timeoutJob);
+    }
+
+    timeout = setTimeout(callback, milliseconds);
     this.schedulerRegistry.addTimeout(timeoutJob, timeout);
   }
 

@@ -1,11 +1,11 @@
 import { Metadata } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
-import { SubmissionService } from './submission.service';
 import {
   GetSubmissionsOfAssignmentMoodleIdRequest,
   SubmissionResponce,
 } from './interfaces/Submission';
+import { SubmissionService } from './submission.service';
 
 @Controller('submission')
 export class SubmissionController {

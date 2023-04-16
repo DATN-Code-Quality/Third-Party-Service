@@ -3,7 +3,6 @@ import { BaseEntity } from 'src/common/base.entity';
 import { Column, Entity, Unique } from 'typeorm';
 
 @Entity('submission', { schema: 'sonarqube' })
-@Unique('submission_assignmentId', ['submissionMoodleId'])
 export class SubmissionReqDto extends BaseEntity {
   @IsString()
   @Column('varchar', { name: 'assignmentId', length: 255 })

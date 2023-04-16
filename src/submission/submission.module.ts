@@ -10,6 +10,6 @@ import { SubmissionResDto } from './res/submission-res.dto';
   imports: [TypeOrmModule.forFeature([SubmissionReqDto, SubmissionResDto])],
   controllers: [SubmissionController],
   providers: [SubmissionService, SubmissionDBService],
-  exports: [SubmissionService],
+  exports: [SubmissionService, SubmissionDBService],
 })
 export class SubmissionModule {}
