@@ -1,4 +1,5 @@
 export interface Submission {
+  id: string;
   assignmentId: string;
   link: string;
   note: string | null;

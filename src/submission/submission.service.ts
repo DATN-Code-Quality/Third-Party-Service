@@ -1,19 +1,22 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
+import { WorkflowClient } from '@temporalio/client';
+import { InjectTemporalClient } from 'nestjs-temporal';
 import { firstValueFrom } from 'rxjs';
+import { TaskQueue, Workflows } from 'src/temporal/workflows';
 import { Submission } from './interfaces/Submission';
 
 @Injectable()
 export class SubmissionService {
   constructor(
     @Inject('MOODLE_MODULE') private readonly token: string,
+    @InjectTemporalClient() private readonly client: WorkflowClient,
     private readonly httpService: HttpService,
   ) {}
 
   async getSubmissionsByAssignmentId(
     assignmentMoodleId: string,
   ): Promise<Submission[]> {
-    console.log(assignmentMoodleId);
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
@@ -48,5 +51,16 @@ export class SubmissionService {
     }
 
     return [];
+  }
+
+  async scanCodes(submission: Submission): Promise<any> {
+    const handle = await this.client.start(Workflows.ScannerWorkflow, {
+      args: [submission],
+      workflowId: `workflow_${submission.id}_${new Date().getTime()}`,
+      taskQueue: TaskQueue.ScannerService,
+    });
+    const result = await handle.result();
+
+    return result;
   }
 }
