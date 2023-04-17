@@ -1,9 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import { SubmissionService } from '../submission/submission.service';
+import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
 import { SubmissionDBService } from 'src/submission/submissionDB.service';
-import { SubmissionReqDto } from 'src/submission/req/submission-req.dto';
+import { SubmissionService } from '../submission/submission.service';
 
 @Injectable()
 export class SchedulerService {
@@ -15,25 +15,26 @@ export class SchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     private submissionService: SubmissionService,
     private submissionDBService: SubmissionDBService,
+    @Inject('MOODLE_MODULE') private readonly token: string,
   ) {}
 
-  startJob(assignmentId: string, dueTime: number) {
-    this.addCronJob(assignmentId, this.INTERVAL);
-    this.addTimeout(assignmentId, dueTime - Date.now());
+  startJob(id: string, moodleId: string, dueTime: number) {
+    this.addCronJob(id, moodleId, this.INTERVAL);
+    this.addTimeout(moodleId, dueTime - Date.now());
   }
 
-  stopJob(assignmentId: string) {
-    this.deleteJob(assignmentId);
-    this.deleteTimeout(assignmentId);
+  stopJob(moodleId: string) {
+    this.deleteJob(moodleId);
+    this.deleteTimeout(moodleId);
   }
 
-  updateJob(assignmentId: string, dueTime: number) {
-    this.stopJob(assignmentId);
-    this.startJob(assignmentId, dueTime);
+  updateJob(id: string, moodleId: string, dueTime: number) {
+    this.stopJob(moodleId);
+    this.startJob(id, moodleId, dueTime);
   }
 
-  private addCronJob(assignmentId: string, minutes: number) {
-    const name = this.buildCronJobName(assignmentId);
+  private addCronJob(id: string, moodleId: string, minutes: number) {
+    const name = this.buildCronJobName(moodleId);
 
     let job = null;
 
@@ -54,9 +55,12 @@ export class SchedulerService {
 
         // step 1: get all submissions
         let submissions =
-          await this.submissionService.getSubmissionsByAssignmentId(
-            assignmentId,
-          );
+          await this.submissionService.getSubmissionsByAssignmentId(moodleId);
+
+        submissions = submissions.map((submission) => ({
+          ...submission,
+          assignmentId: id,
+        }));
 
         // step 2: filter out old submissions
         // submissions = submissions.filter(
@@ -84,11 +88,14 @@ export class SchedulerService {
             ret = { ...submission, id: submissionResDto.data.id };
           } else {
             const { data } = await this.submissionDBService.create(
-              SubmissionReqDto,
+              SubmissionResDto,
               submission as any,
             );
             ret = { ...data };
           }
+
+          // add token to url
+          ret = { ...ret, link: `${ret.link}?token=${this.token}` };
 
           Logger.debug(`savedSubmissions: ${JSON.stringify(ret)}`);
           // step 4: send to scanner

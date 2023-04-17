@@ -37,6 +37,7 @@ export class AssignmentController {
     const { assignments } = data;
     assignments.forEach((assignment) => {
       this.scheduler.startJob(
+        assignment.id,
         assignment.assignmentMoodleId,
         Number(assignment.dueDate),
       );
