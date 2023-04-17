@@ -33,8 +33,7 @@ export class AssignmentController {
   @GrpcMethod('AssignmentService', 'AddAssignmentCronjob')
   async addAssignmentCronjob(data: AssignmentsCronjobRequest, meta: Metadata) {
     Logger.debug('Add cronjob - data: ' + JSON.stringify(data));
-    // TODO: add cronjob
-
+    
     const { assignments } = data;
     assignments.forEach((assignment) => {
       this.scheduler.startJob(

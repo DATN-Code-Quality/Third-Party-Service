@@ -1,8 +1,9 @@
-import { Expose } from "class-transformer";
-import { IsString } from 'class-validator';
-import { BaseDto } from "src/common/base.dto";
+import { Expose } from 'class-transformer';
+import { IsDate, IsString } from 'class-validator';
+import { BaseDto } from 'src/common/base.dto';
+import { Column } from 'typeorm';
 
-export class SubmissionResDto extends BaseDto{
+export class SubmissionResDto extends BaseDto {
   @IsString()
   @Expose()
   assignmentId: string;
@@ -18,6 +19,10 @@ export class SubmissionResDto extends BaseDto{
   @IsString()
   @Expose()
   submitType: string;
+
+  @IsDate()
+  @Column('datetime', { name: 'timemodified' })
+  timemodified: Date;
 
   @IsString()
   @Expose()

@@ -76,16 +76,19 @@ export class SchedulerService {
           // step 3: save to db
           let ret = null;
           if (submissionResDto.data !== null) {
-            ret = await this.submissionDBService.update(
+            await this.submissionDBService.update(
               submissionResDto.data.id,
               submission as any,
             );
-          }
 
-          ret = await this.submissionDBService.create(
-            SubmissionReqDto,
-            submission as any,
-          );
+            ret = { ...submission, id: submissionResDto.data.id };
+          } else {
+            const { data } = await this.submissionDBService.create(
+              SubmissionReqDto,
+              submission as any,
+            );
+            ret = { ...data };
+          }
 
           Logger.debug(`savedSubmissions: ${JSON.stringify(ret)}`);
           // step 4: send to scanner

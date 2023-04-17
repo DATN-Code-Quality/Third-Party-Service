@@ -16,7 +16,8 @@ export class BaseService<Entity extends BaseEntity, Dto> {
       .save(createDto as any)
       .then((savedDto) => {
         result = OperationResult.ok(
-          plainToInstance(cls, savedDto, { excludeExtraneousValues: true }),
+          savedDto,
+          // plainToInstance(cls, savedDto, { excludeExtraneousValues: true }),
         );
       })
       .catch((err) => {
@@ -93,7 +94,9 @@ export class BaseService<Entity extends BaseEntity, Dto> {
     var result: OperationResult<any>;
     await this.repo
       .update(id, updateDto as any)
-      .then(() => {
+      .then((updateDto) => {
+        Logger.debug({ updateDto });
+
         result = OperationResult.ok('Update successfully');
       })
       .catch((err) => {

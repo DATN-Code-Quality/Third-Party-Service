@@ -41,7 +41,7 @@ export class SubmissionService {
           ]?.fileurl || '',
         note: item.status,
         submitType: item.plugins[0].type,
-        timemodified: item.timemodified,
+        timemodified: new Date(item.timemodified),
         userId: item.userid,
         origin: '',
         status: item.status,

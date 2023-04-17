@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber, IsString } from 'class-validator';
 import { BaseEntity } from 'src/common/base.entity';
 import { Column, Entity, Unique } from 'typeorm';
 
@@ -19,6 +19,10 @@ export class SubmissionReqDto extends BaseEntity {
   @IsString()
   @Column('varchar', { name: 'submitType', length: 255 })
   submitType: string;
+
+  @IsDate()
+  @Column('datetime', { name: 'timemodified' })
+  timemodified: Date;
 
   @IsString()
   @Column('varchar', { name: 'userId', length: 255 })
