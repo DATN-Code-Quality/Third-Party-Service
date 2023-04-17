@@ -25,6 +25,7 @@ export class AssignmentService {
         .pipe(),
     );
     const dataAssignments = data?.courses[0].assignments;
+    console.log(dataAssignments);
     if (data && dataAssignments.length > 0) {
       return dataAssignments.map((item: any) => ({
         name: item.name,
@@ -34,7 +35,7 @@ export class AssignmentService {
         description: '',
         attachmentFileLink: '',
         config: '',
-        assignmentMoodleId: courseId,
+        assignmentMoodleId: item.id,
       }));
     }
 
