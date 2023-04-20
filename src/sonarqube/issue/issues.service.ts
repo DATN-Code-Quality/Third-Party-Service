@@ -39,6 +39,7 @@ export class IssuesService {
             p: page,
             ps: pageSize,
           },
+          timeout: 60000,
         })
         .pipe(),
     );

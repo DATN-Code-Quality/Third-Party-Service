@@ -57,17 +57,18 @@ export class SchedulerService {
         let submissions =
           await this.submissionService.getSubmissionsByAssignmentId(moodleId);
 
+        submissions = submissions.filter(
+          (submission) => submission.link && submission.link !== '',
+        );
+
+        Logger.debug(
+          `submissions: ${JSON.stringify(submissions)}`,
+        );
+
         submissions = submissions.map((submission) => ({
           ...submission,
           assignmentId: id,
         }));
-
-        // step 2: filter out old submissions
-        // submissions = submissions.filter(
-        //   (submission) =>
-        //     Number(submission.timemodified) >
-        //     new Date().getTime() / 1000 - 60 * minutes,
-        // );
 
         submissions.map(async (submission) => {
           const submissionResDto =
