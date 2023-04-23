@@ -16,8 +16,7 @@ export class BaseService<Entity extends BaseEntity, Dto> {
       .save(createDto as any)
       .then((savedDto) => {
         result = OperationResult.ok(
-          savedDto,
-          // plainToInstance(cls, savedDto, { excludeExtraneousValues: true }),
+          plainToInstance(cls, savedDto, { excludeExtraneousValues: true }),
         );
       })
       .catch((err) => {
@@ -50,8 +49,6 @@ export class BaseService<Entity extends BaseEntity, Dto> {
     await this.repo
       .findBy({})
       .then((dtos) => {
-        console.log(dtos);
-
         result = OperationResult.ok(
           plainToInstance(cls, dtos, { excludeExtraneousValues: true }),
         );
@@ -60,7 +57,6 @@ export class BaseService<Entity extends BaseEntity, Dto> {
         result = OperationResult.error(err);
       });
 
-    console.log(result);
     return result;
   }
 
@@ -94,9 +90,7 @@ export class BaseService<Entity extends BaseEntity, Dto> {
     var result: OperationResult<any>;
     await this.repo
       .update(id, updateDto as any)
-      .then((updateDto) => {
-        Logger.debug({ updateDto });
-
+      .then(() => {
         result = OperationResult.ok('Update successfully');
       })
       .catch((err) => {

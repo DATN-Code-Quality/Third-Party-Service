@@ -8,7 +8,7 @@ import { SourceRequest, SourceResponse } from './interfaces/Source';
 export class SourcesController {
   constructor(private readonly sourceService: SourcesService) {}
 
-  @GrpcMethod('SourceService', 'getSourcesByKey')
+  @GrpcMethod('GSourceService', 'getSourcesByKey')
   async getSourcesBySubmissionId(
     data: SourceRequest,
     meta: Metadata,

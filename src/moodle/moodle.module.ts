@@ -1,4 +1,4 @@
-import { HttpModule, HttpService } from '@nestjs/axios';
+import { HttpService } from '@nestjs/axios';
 import { Global, Logger, Module } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { genEndpoint } from 'src/utils';

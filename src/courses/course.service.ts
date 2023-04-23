@@ -39,7 +39,7 @@ export class CoursesService {
     return [];
   }
 
-  async getUsersCourse(userMoodleId: string): Promise<Course[]> {
+  async getUsersCourse(userMoodleId: number): Promise<Course[]> {
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
@@ -69,7 +69,7 @@ export class CoursesService {
     return [];
   }
 
-  async getCoursesByCategory(categoryMoodleId: string): Promise<Course[]> {
+  async getCoursesByCategory(categoryMoodleId: number): Promise<Course[]> {
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
@@ -99,7 +99,7 @@ export class CoursesService {
 
     return [];
   }
-  async getCoursesByMoodleId(courseMoodleId: string): Promise<Course[]> {
+  async getCoursesByMoodleId(courseMoodleId: number): Promise<Course[]> {
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {

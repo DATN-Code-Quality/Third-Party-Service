@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Assignment } from './interfaces/Assignment';
 
@@ -10,35 +10,46 @@ export class AssignmentService {
     private readonly httpService: HttpService,
   ) {}
 
-  async getAllAssignmentsByCourseId(courseId: string): Promise<Assignment[]> {
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
-          params: {
-            wstoken: this.token,
-            wsfunction: 'mod_assign_get_assignments',
-            moodlewsrestformat: 'json',
-            'courseids[0]': courseId,
-            includenotenrolledcourses: 1,
-          },
-        })
-        .pipe(),
-    );
-    const dataAssignments = data?.courses[0].assignments;
-    console.log(dataAssignments);
-    if (data && dataAssignments.length > 0) {
-      return dataAssignments.map((item: any) => ({
-        name: item.name,
-        dueDate: item.duedate,
-        status: true,
-        courseId: item.course,
-        description: '',
-        attachmentFileLink: '',
-        config: '',
-        assignmentMoodleId: item.id,
-      }));
+  async getAllAssignmentsByCourseId(courseId: number): Promise<Assignment[]> {
+    let ret: Assignment[] = null;
+
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'mod_assign_get_assignments',
+              moodlewsrestformat: 'json',
+              'courseids[0]': courseId,
+              includenotenrolledcourses: 1,
+            },
+          })
+          .pipe(),
+      );
+
+      const dataAssignments = data?.courses[0].assignments;
+
+      if (data && dataAssignments.length > 0) {
+        ret = dataAssignments.map(this.buildAssignment);
+      }
+    } catch (error) {
+      Logger.error(error, 'AssignmentService.getAllAssignmentsByCourseId');
     }
 
-    return [];
+    return ret;
+  }
+
+  private buildAssignment(moodleAssignment: any): Assignment {
+    return {
+      name: moodleAssignment.name,
+      dueDate: moodleAssignment.duedate,
+      status: true,
+      courseId: moodleAssignment.course,
+      description: '',
+      attachmentFileLink: '',
+      config: '',
+      assignmentMoodleId: moodleAssignment.id,
+    };
   }
 }

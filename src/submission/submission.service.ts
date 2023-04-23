@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { WorkflowClient } from '@temporalio/client';
 import { InjectTemporalClient } from 'nestjs-temporal';
 import { firstValueFrom } from 'rxjs';
@@ -15,42 +15,53 @@ export class SubmissionService {
   ) {}
 
   async getSubmissionsByAssignmentId(
-    assignmentMoodleId: string,
+    assignmentMoodleId: number,
   ): Promise<Submission[]> {
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
-          params: {
-            wstoken: this.token,
-            wsfunction: 'mod_assign_get_submissions',
-            moodlewsrestformat: 'json',
-            'assignmentids[0]': assignmentMoodleId,
-          },
-        })
-        .pipe(),
-    );
-    const dataSubmission = data?.assignments[0].submissions;
+    let ret: Submission[] = [];
 
-    if (dataSubmission && dataSubmission.length > 0) {
-      return dataSubmission.map((item: any) => ({
-        assignmentId: '',
-        //Hiện tại là lấy submission mới nhất
-        link:
-          item.plugins[0].fileareas[0].files[
-            item.plugins[0].fileareas[0].files.length - 1
-          ]?.fileurl || '',
-        note: item.status,
-        submitType: item.plugins[0].type,
-        timemodified: new Date(item.timemodified),
-        userId: item.userid,
-        origin: '',
-        status: item.status,
-        grade: null,
-        submissionMoodleId: item.id,
-      }));
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'mod_assign_get_submissions',
+              moodlewsrestformat: 'json',
+              'assignmentids[0]': assignmentMoodleId,
+            },
+          })
+          .pipe(),
+      );
+      const dataSubmission = data?.assignments[0].submissions;
+
+      if (dataSubmission && dataSubmission.length > 0) {
+        ret = dataSubmission.map(this.buildSubmission);
+      }
+    } catch (error) {
+      Logger.error(error, 'SubmissionService.getSubmissionsByAssignmentId');
     }
 
-    return [];
+    return ret;
+  }
+
+  private buildSubmission(moodleSubmission: any): Submission {
+    return {
+      assignmentId: '',
+      id: '',
+      //Hiện tại là lấy submission mới nhất
+      link:
+        moodleSubmission.plugins[0].fileareas[0].files[
+          moodleSubmission.plugins[0].fileareas[0].files.length - 1
+        ]?.fileurl || '',
+      note: moodleSubmission.status,
+      submitType: moodleSubmission.plugins[0].type,
+      timemodified: new Date(moodleSubmission.timemodified).toString(),
+      userId: moodleSubmission.userid,
+      origin: '',
+      status: moodleSubmission.status,
+      grade: null,
+      submissionMoodleId: moodleSubmission.id,
+    };
   }
 
   async scanCodes(submission: Submission): Promise<any> {

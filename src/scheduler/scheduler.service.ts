@@ -18,22 +18,22 @@ export class SchedulerService {
     @Inject('MOODLE_MODULE') private readonly token: string,
   ) {}
 
-  startJob(id: string, moodleId: string, dueTime: number) {
+  startJob(id: string, moodleId: number, dueTime: number) {
     this.addCronJob(id, moodleId, this.INTERVAL);
     this.addTimeout(moodleId, dueTime - Date.now());
   }
 
-  stopJob(moodleId: string) {
+  stopJob(moodleId: number) {
     this.deleteJob(moodleId);
     this.deleteTimeout(moodleId);
   }
 
-  updateJob(id: string, moodleId: string, dueTime: number) {
+  updateJob(id: string, moodleId: number, dueTime: number) {
     this.stopJob(moodleId);
     this.startJob(id, moodleId, dueTime);
   }
 
-  private addCronJob(id: string, moodleId: string, minutes: number) {
+  private addCronJob(id: string, moodleId: number, minutes: number) {
     const name = this.buildCronJobName(moodleId);
 
     let job = null;
@@ -61,9 +61,7 @@ export class SchedulerService {
           (submission) => submission.link && submission.link !== '',
         );
 
-        Logger.debug(
-          `submissions: ${JSON.stringify(submissions)}`,
-        );
+        Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
 
         submissions = submissions.map((submission) => ({
           ...submission,
@@ -113,7 +111,7 @@ export class SchedulerService {
     job.start();
   }
 
-  private addTimeout(assignmentId: string, milliseconds: number) {
+  private addTimeout(assignmentId: number, milliseconds: number) {
     const timeoutJob = this.buildTimeoutName(assignmentId);
     const cronJob = this.buildCronJobName(assignmentId);
 
@@ -138,21 +136,21 @@ export class SchedulerService {
     this.schedulerRegistry.addTimeout(timeoutJob, timeout);
   }
 
-  private deleteJob(assignmentId: string) {
+  private deleteJob(assignmentId: number) {
     const cronJobName = this.buildCronJobName(assignmentId);
     this.schedulerRegistry.deleteCronJob(cronJobName);
   }
 
-  private deleteTimeout(assignmentId: string) {
+  private deleteTimeout(assignmentId: number) {
     const timeoutName = this.buildTimeoutName(assignmentId);
     this.schedulerRegistry.deleteTimeout(timeoutName);
   }
 
-  private buildTimeoutName(assignmentId: string) {
+  private buildTimeoutName(assignmentId: number) {
     return `${this.TIMEOUT_JOB_NAME}_${assignmentId}`;
   }
 
-  private buildCronJobName(assignmentId: string) {
+  private buildCronJobName(assignmentId: number) {
     return `${this.CRON_JOB_NAME}_${assignmentId}`;
   }
 }
