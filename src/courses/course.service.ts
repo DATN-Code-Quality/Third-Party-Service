@@ -1,7 +1,8 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Course, CourseModelDTO as CourseMoodelDTO } from './interfaces/Course';
+import { OperationResult } from 'src/common/operation-result';
 
 @Injectable()
 export class CoursesService {
@@ -10,124 +11,122 @@ export class CoursesService {
     private readonly httpService: HttpService,
   ) {}
 
-  async getAllCourses(): Promise<Course[]> {
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
-          params: {
-            wstoken: this.token,
-            wsfunction: 'core_course_get_courses',
-            moodlewsrestformat: 'json',
-          },
-        })
-        .pipe(),
-    );
-
-    if (data && data.length > 0) {
-      return data.map((item: CourseMoodelDTO) => ({
-        name: item.fullname,
-        moodleId: '',
-        courseMoodleId: item.id,
-        startAt: item.startdate,
-        endAt: item.enddate,
-        detail: '',
-        summary: item.summary,
-        categoryId: item.category,
-      }));
+  async getAllCourses(): Promise<OperationResult<Course[]>> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'core_course_get_courses',
+              moodlewsrestformat: 'json',
+            },
+          })
+          .pipe(),
+      );
+      if (data && data.length > 0) {
+        const ret = data.map(this.buildCourse);
+        return OperationResult.ok(ret);
+      }
+    } catch (error) {
+      Logger.error(error, 'CoursesService.getAllCourses');
+      return OperationResult.error(error, []);
     }
-
-    return [];
   }
 
-  async getUsersCourse(userMoodleId: number): Promise<Course[]> {
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
-          params: {
-            wstoken: this.token,
-            wsfunction: 'core_enrol_get_users_courses',
-            moodlewsrestformat: 'json',
-            userid: userMoodleId,
-          },
-        })
-        .pipe(),
-    );
+  async getUsersCourse(
+    userMoodleId: number,
+  ): Promise<OperationResult<Course[]>> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'core_enrol_get_users_courses',
+              moodlewsrestformat: 'json',
+              userid: userMoodleId,
+            },
+          })
+          .pipe(),
+      );
 
-    if (data && data.length > 0) {
-      return data.map((item: CourseMoodelDTO) => ({
-        name: item.fullname,
-        moodleId: '',
-        courseMoodleId: item.id,
-        startAt: item.startdate,
-        endAt: item.enddate,
-        detail: '',
-        summary: item.summary,
-        categoryId: item.category,
-      }));
+      if (data && data.length > 0) {
+        const ret = data.map(this.buildCourse);
+        return OperationResult.ok(ret);
+      }
+    } catch (error) {
+      Logger.error(error, 'CoursesService.getUsersCourse');
+      return OperationResult.error(error, []);
     }
-
-    return [];
   }
 
-  async getCoursesByCategory(categoryMoodleId: number): Promise<Course[]> {
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
-          params: {
-            wstoken: this.token,
-            wsfunction: 'core_course_get_courses_by_field',
-            moodlewsrestformat: 'json',
-            field: 'category',
-            value: categoryMoodleId,
-          },
-        })
-        .pipe(),
-    );
+  async getCoursesByCategory(
+    categoryMoodleId: number,
+  ): Promise<OperationResult<Course[]>> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'core_course_get_courses_by_field',
+              moodlewsrestformat: 'json',
+              field: 'category',
+              value: categoryMoodleId,
+            },
+          })
+          .pipe(),
+      );
 
-    if (data && data.courses.length > 0) {
-      return data.courses.map((item: CourseMoodelDTO) => ({
-        name: item.fullname,
-        moodleId: '',
-        courseMoodleId: item.id,
-        startAt: item.startdate,
-        endAt: item.enddate,
-        detail: '',
-        summary: item.summary,
-        categoryId: item.category,
-      }));
+      if (data && data.courses.length > 0) {
+        const ret = data.courses.map(this.buildCourse);
+        return OperationResult.ok(ret);
+      }
+    } catch (error) {
+      Logger.error(error, 'CoursesService.getCoursesByCategory');
+      return OperationResult.error(error, []);
     }
-
-    return [];
   }
-  async getCoursesByMoodleId(courseMoodleId: number): Promise<Course[]> {
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
-          params: {
-            wstoken: this.token,
-            wsfunction: 'core_course_get_courses_by_field',
-            moodlewsrestformat: 'json',
-            field: 'id',
-            value: courseMoodleId,
-          },
-        })
-        .pipe(),
-    );
-    console.log(data);
 
-    if (data && data.courses.length > 0) {
-      return data.courses.map((item: CourseMoodelDTO) => ({
-        name: item.fullname,
-        moodleId: '',
-        courseMoodleId: item.id,
-        startAt: item.startdate,
-        endAt: item.enddate,
-        detail: '',
-        summary: item.summary,
-        categoryId: item.category,
-      }));
+  async getCoursesByMoodleId(
+    courseMoodleId: number,
+  ): Promise<OperationResult<Course[]>> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'core_course_get_courses_by_field',
+              moodlewsrestformat: 'json',
+              field: 'id',
+              value: courseMoodleId,
+            },
+          })
+          .pipe(),
+      );
+
+      if (data && data.courses.length > 0) {
+        const ret = data.courses.map(this.buildCourse);
+        return OperationResult.ok(ret);
+      }
+    } catch (error) {
+      Logger.error(error, 'CoursesService.getCoursesByMoodleId');
+      return OperationResult.error(error, []);
     }
+  }
 
-    return [];
+  private buildCourse(data: CourseMoodelDTO): Course {
+    return {
+      name: data.fullname,
+      moodleId: '',
+      courseMoodleId: data.id,
+      startAt: data.startdate + '',
+      endAt: data.enddate + '',
+      detail: '',
+      summary: data.summary,
+      categoryId: data.category + '',
+    };
   }
 }

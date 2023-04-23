@@ -1,13 +1,14 @@
 import { Metadata } from '@grpc/grpc-js';
 import { Controller, UseFilters, UsePipes } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
+import { OperationResult } from 'src/common/operation-result';
+import { ValidationErrorFilter } from 'src/common/validate-exception.filter';
+import { ValidationPipe } from 'src/common/validation.pipe';
 import {
   GetSubmissionsOfAssignmentMoodleIdRequest,
-  SubmissionResponce,
+  Submission,
 } from './interfaces/Submission';
 import { SubmissionService } from './submission.service';
-import { ValidationPipe } from 'src/common/validation.pipe';
-import { ValidationErrorFilter } from 'src/common/validate-exception.filter';
 
 @Controller('submission')
 export class SubmissionController {
@@ -18,13 +19,7 @@ export class SubmissionController {
   async getSubmissionsByAssignmentId(
     data: GetSubmissionsOfAssignmentMoodleIdRequest,
     meta: Metadata,
-  ): Promise<SubmissionResponce> {
-    const submissions = await this.service.getSubmissionsByAssignmentId(
-      data.assignmentMoodleId,
-    );
-    return {
-      data: submissions,
-      error: 0,
-    };
+  ): Promise<OperationResult<Submission[]>> {
+    return this.service.getSubmissionsByAssignmentId(data.assignmentMoodleId);
   }
 }

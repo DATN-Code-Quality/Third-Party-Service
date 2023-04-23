@@ -32,7 +32,7 @@ export interface CourseModelDTO {
 export interface Course {
   name: string;
   moodleId: string;
-  courseMoodleId: string;
+  courseMoodleId: number;
   startAt: string;
   endAt: string;
   detail: string | null;

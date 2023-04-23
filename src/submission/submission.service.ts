@@ -5,6 +5,7 @@ import { InjectTemporalClient } from 'nestjs-temporal';
 import { firstValueFrom } from 'rxjs';
 import { TaskQueue, Workflows } from 'src/temporal/workflows';
 import { Submission } from './interfaces/Submission';
+import { OperationResult } from 'src/common/operation-result';
 
 @Injectable()
 export class SubmissionService {
@@ -16,7 +17,7 @@ export class SubmissionService {
 
   async getSubmissionsByAssignmentId(
     assignmentMoodleId: number,
-  ): Promise<Submission[]> {
+  ): Promise<OperationResult<Submission[]>> {
     let ret: Submission[] = [];
 
     try {
@@ -39,9 +40,10 @@ export class SubmissionService {
       }
     } catch (error) {
       Logger.error(error, 'SubmissionService.getSubmissionsByAssignmentId');
+      return OperationResult.error(error, []);
     }
 
-    return ret;
+    return OperationResult.ok(ret);
   }
 
   private buildSubmission(moodleSubmission: any): Submission {

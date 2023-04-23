@@ -54,8 +54,18 @@ export class SchedulerService {
         Logger.debug(`${name} is running...`);
 
         // step 1: get all submissions
-        let submissions =
-          await this.submissionService.getSubmissionsByAssignmentId(moodleId);
+        let result = await this.submissionService.getSubmissionsByAssignmentId(
+          moodleId,
+        );
+
+        if (!result.isOk()) {
+          Logger.error(
+            "Can't get submissions from moodle",
+            'SchedulerService.addCronJob',
+          );
+        }
+
+        let submissions = result.data;
 
         submissions = submissions.filter(
           (submission) => submission.link && submission.link !== '',

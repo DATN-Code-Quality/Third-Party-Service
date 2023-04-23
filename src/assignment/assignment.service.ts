@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Assignment } from './interfaces/Assignment';
+import { OperationResult } from 'src/common/operation-result';
 
 @Injectable()
 export class AssignmentService {
@@ -10,7 +11,9 @@ export class AssignmentService {
     private readonly httpService: HttpService,
   ) {}
 
-  async getAllAssignmentsByCourseId(courseId: number): Promise<Assignment[]> {
+  async getAllAssignmentsByCourseId(
+    courseId: number,
+  ): Promise<OperationResult<Assignment[]>> {
     let ret: Assignment[] = null;
 
     try {
@@ -35,9 +38,10 @@ export class AssignmentService {
       }
     } catch (error) {
       Logger.error(error, 'AssignmentService.getAllAssignmentsByCourseId');
+      return OperationResult.error(error, []);
     }
 
-    return ret;
+    return OperationResult.ok(ret);
   }
 
   private buildAssignment(moodleAssignment: any): Assignment {

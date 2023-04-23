@@ -17,11 +17,11 @@ message User {
 message Course {    
   string name = 1;
   string moodleId =2;
-  string courseMoodleId =3 ;
+  int32 courseMoodleId =3 ;
   string startAt =4;
   string endAt = 5;
   string detail = 6;
-  string  summary = 7;
+  string summary = 7;
   string categoryId = 8;
 }
 
@@ -56,6 +56,7 @@ message GetUsersRequest {
 message UsersResponse {
   int32 error = 1;
   repeated User data = 2;
+  string message = 3;
 }
 
 message GetCourseOfUserRequest {
@@ -81,16 +82,19 @@ message GetCourseOfMoodleIdRequest {
 message CoursesResponse {
   int32 error = 1;
   repeated Course data = 2;
+  string message = 3;
 }
 
 message AssignmentsResponse {
   int32 error = 1;
   repeated Assignment data = 2;
+  string message = 3;
 }
 
 message SubmissionsResponse {
   int32 error = 1;
   repeated Submission data = 2;
+  string message = 3;
 }
 
 message Categories{
@@ -213,18 +217,4 @@ service GCourseService {
   rpc GetUsersCourse(GetCourseOfUserRequest) returns (CoursesResponse);
   rpc GetCoursesByCategory(GetCourseOfCategoryRequest) returns (CoursesResponse);
   rpc GetCoursesByMoodleId(GetCourseOfMoodleIdRequest) returns (CoursesResponse);
-}
-
-message TestRequest {
-  string str = 1;
-  int32 num = 2;  
-}
-
-message TestResponse {
-  int32 error = 1;
-  int32 data = 2;  
-}
-
-service TestService {
-  rpc Test(TestRequest) returns (TestResponse);
 }

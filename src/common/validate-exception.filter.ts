@@ -4,6 +4,6 @@ import { ValidationError } from 'class-validator';
 @Catch(ValidationError)
 export class ValidationErrorFilter implements ExceptionFilter {
   catch(exception: ValidationError, host: ArgumentsHost) {
-    return { error: 5, data: null };
+    return { error: 5, data: null, message: 'Invalid Input' };
   }
 }

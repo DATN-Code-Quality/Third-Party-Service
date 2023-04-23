@@ -4,12 +4,13 @@ import { GrpcMethod } from '@nestjs/microservices';
 import { SchedulerService } from 'src/scheduler/scheduler.service';
 import { AssignmentService } from './assignment.service';
 import {
+  Assignment,
   AssignmentsCronjobRequest,
-  AssignmentsResponce,
   GetAssignmentsOfCourseRequest,
 } from './interfaces/Assignment';
 import { ValidationPipe } from 'src/common/validation.pipe';
 import { ValidationErrorFilter } from 'src/common/validate-exception.filter';
+import { OperationResult } from 'src/common/operation-result';
 
 @Controller('assignment')
 export class AssignmentController {
@@ -24,15 +25,8 @@ export class AssignmentController {
   async getAllAssignmentsByCourseId(
     data: GetAssignmentsOfCourseRequest,
     meta: Metadata,
-  ): Promise<AssignmentsResponce> {
-    const assignments = await this.service.getAllAssignmentsByCourseId(
-      data.courseMoodleId,
-    );
-
-    return {
-      data: assignments,
-      error: 0,
-    };
+  ): Promise<OperationResult<Assignment[]>> {
+    return this.service.getAllAssignmentsByCourseId(data.courseMoodleId);
   }
 
   @GrpcMethod('GAssignmentService', 'AddAssignmentCronjob')

@@ -19,11 +19,6 @@ export interface Assignment {
   assignmentMoodleId: string;
 }
 
-export interface AssignmentsResponce {
-  error: number;
-  data: Assignment[];
-}
-
 export class GetAssignmentsOfCourseRequest {
   @IsNumber()
   @Min(1)
