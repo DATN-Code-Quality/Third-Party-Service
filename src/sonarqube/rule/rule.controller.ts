@@ -1,21 +1,21 @@
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { Metadata } from '@grpc/grpc-js';
-import { SourcesService } from './sources.service';
-import { SourceRequest, SourceResponse } from './interfaces/Source';
+import { RulesService } from './rule.service';
+import { RuleRequest, RuleResponse } from './interfaces/Rule';
 
-@Controller('sources')
-export class SourcesController {
-  constructor(private readonly sourceService: SourcesService) {}
+@Controller('rules')
+export class RulesController {
+  constructor(private readonly ruleService: RulesService) {}
 
-  @GrpcMethod('GSourceService', 'getSourcesByKey')
+  @GrpcMethod('GRuleService', 'getRuleDetailByKey')
   async getSourcesBySubmissionId(
-    data: SourceRequest,
+    data: RuleRequest,
     meta: Metadata,
-  ): Promise<SourceResponse> {
-    var result: SourceResponse;
-    await this.sourceService
-      .getSourcesByKey(data.key)
+  ): Promise<RuleResponse> {
+    var result: RuleResponse;
+    await this.ruleService
+      .getRuleDetailByKey(data.key)
       .then((source) => {
         if (source == null) {
           result = {

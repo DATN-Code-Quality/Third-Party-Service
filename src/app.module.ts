@@ -14,26 +14,27 @@ import { SourcesModule } from './sonarqube/source/sources.module';
 import { SubmissionReqDto } from './submission/req/submission-req.dto';
 import { TemporlClientModule } from './temporal/client.module';
 import { UsersModule } from './users/users.module';
+import { RuleModule } from './sonarqube/rule/rule.module';
 
 @Module({
   imports: [
-    MoodleModule,
-    UsersModule,
-    CoursesModule,
-    CategoryModule,
-    AssignmentModule,
-    {
-      ...HttpModule.register({
-        baseURL: process.env.MOODLE_BASE_URL,
-      }),
-      global: true,
-    },
+    // MoodleModule,
+    // UsersModule,
+    // CoursesModule,
+    // CategoryModule,
+    // AssignmentModule,
+    // {
+    //   ...HttpModule.register({
+    //     baseURL: process.env.MOODLE_BASE_URL,
+    //   }),
+    //   global: true,
+    // },
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
-      port: 3308,
+      port: 3306,
       username: 'root',
-      password: 'root',
+      password: '04042001',
       database: 'sonarqube',
       entities: [ProjectDto, SubmissionReqDto],
       logging: 'all',
@@ -42,11 +43,12 @@ import { UsersModule } from './users/users.module';
     IssuesModule,
     ProjectModule,
     SourcesModule,
+    RuleModule,
     TemporlClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
-  exports: [MoodleModule],
+  // exports: [MoodleModule],
   // exports: [MoodleModule],
 })
 export class AppModule {}

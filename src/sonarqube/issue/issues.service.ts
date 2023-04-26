@@ -16,6 +16,9 @@ export class IssuesService {
   async getIssuesBySubmissionId(
     submissionId: string,
     type: string,
+    severity: string,
+    rule: string,
+    file: string,
     page: number,
     pageSize: number,
   ): Promise<Issue> {
@@ -35,16 +38,22 @@ export class IssuesService {
           },
           params: {
             componentKeys: project.key,
+            additionalFields: 'rules',
             types: type,
+            rules: rule,
+            severities: severity,
+            files: file,
             p: page,
             ps: pageSize,
           },
           timeout: 60000,
         })
         .pipe(),
-    );
+    ).catch((e) => {
+      throw e;
+    });
 
-    if (data) {
+    if (data !== null) {
       return {
         total: data.total,
         p: data.p,
@@ -52,6 +61,7 @@ export class IssuesService {
         effortTotal: data.effortTotal,
         issues: data.issues,
         components: data.components,
+        rules: data.rules,
       };
     }
 

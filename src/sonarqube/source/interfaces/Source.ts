@@ -8,6 +8,7 @@ export interface SourceRequest {
 }
 
 export interface SourceResponse {
-  sources: Source[];
+  data: Source[];
   error: number;
+  message: string;
 }

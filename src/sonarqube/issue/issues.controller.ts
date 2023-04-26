@@ -13,22 +13,40 @@ export class IssuesController {
     data: IssueRequest,
     meta: Metadata,
   ): Promise<IssueResponse> {
-    const result = await this.issueService.getIssuesBySubmissionId(
-      data.submissionId,
-      data.type,
-      data.page,
-      data.pageSize,
-    );
+    var result: IssueResponse;
+    await this.issueService
+      .getIssuesBySubmissionId(
+        data.submissionId,
+        data.type,
+        data.severity,
+        data.rule,
+        data.file,
+        data.page,
+        data.pageSize,
+      )
+      .then((issue) => {
+        if (issue) {
+          result = {
+            data: issue,
+            error: 0,
+            message: null,
+          };
+        } else {
+          result = {
+            message: 'Not find',
+            data: null,
+            error: 1,
+          };
+        }
+      })
+      .catch((e) => {
+        result = {
+          message: e,
+          data: null,
+          error: 1,
+        };
+      });
 
-    if (result == null) {
-      return {
-        issues: null,
-        error: 1,
-      };
-    }
-    return {
-      issues: result,
-      error: 0,
-    };
+    return result;
   }
 }

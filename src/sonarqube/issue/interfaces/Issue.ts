@@ -14,6 +14,14 @@ export interface TextRange {
   endOffset: number;
 }
 
+export interface RuleOverview {
+  key: string;
+  lang: string;
+  langName: string;
+  name: string;
+  status: string;
+}
+
 export interface IssueDetail {
   key: string;
   rule: string;
@@ -42,6 +50,7 @@ export interface IssueSonarqubeDTO {
   effortTotal: number;
   issues: IssueDetail[];
   components: ComponentDetail[];
+  rules: RuleOverview[];
 }
 
 export interface Issue {
@@ -51,16 +60,21 @@ export interface Issue {
   effortTotal: number;
   issues: IssueDetail[];
   components: ComponentDetail[];
+  rules: RuleOverview[];
 }
 
 export interface IssueRequest {
   submissionId: string;
   type: string;
+  severity: string;
+  rule: string;
+  file: string;
   page: number;
   pageSize: number;
 }
 
 export interface IssueResponse {
-  issues: Issue;
+  data: Issue;
   error: number;
+  message: string;
 }
