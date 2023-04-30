@@ -15,6 +15,7 @@ import { SubmissionReqDto } from './submission/req/submission-req.dto';
 import { TemporlClientModule } from './temporal/client.module';
 import { UsersModule } from './users/users.module';
 import { RuleModule } from './sonarqube/rule/rule.module';
+import { ResultModule } from './sonarqube/result/result.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { RuleModule } from './sonarqube/rule/rule.module';
     ProjectModule,
     SourcesModule,
     RuleModule,
+    ResultModule,
     TemporlClientModule,
   ],
   controllers: [AppController],

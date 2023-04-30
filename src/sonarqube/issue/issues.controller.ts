@@ -33,7 +33,7 @@ export class IssuesController {
           };
         } else {
           result = {
-            message: 'Not find',
+            message: 'No data Found',
             data: null,
             error: 1,
           };

@@ -2,26 +2,22 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import { firstValueFrom, map } from 'rxjs';
 import { moodleArrayInput } from 'src/utils';
-import { Issue, IssueSonarqubeDTO } from '../issue/interfaces/Issue';
+import { Result } from './interfaces/Result';
 import { ProjectService } from 'src/project/project.service';
 
 @Injectable()
-export class IssuesService {
+export class ResultService {
   constructor(
     // @Inject('MOODLE_MODULE') private readonly token: string,
     private readonly httpService: HttpService,
     private readonly projectService: ProjectService,
   ) {}
 
-  async getIssuesBySubmissionId(
+  async getResultsBySubmissionId(
     submissionId: string,
-    type: string,
-    severity: string,
-    rule: string,
-    file: string,
     page: number,
     pageSize: number,
-  ): Promise<Issue> {
+  ): Promise<Result> {
     const project = await this.projectService.findProjectBySubmissionId(
       submissionId,
     );
@@ -32,18 +28,17 @@ export class IssuesService {
 
     const { data } = await firstValueFrom(
       this.httpService
-        .get(`${process.env.SONARQUBE_BASE_URL}/issues/search`, {
+        .get(`${process.env.SONARQUBE_BASE_URL}/measures/search_history`, {
           auth: {
             username: process.env.SONARQUBE_USERNAME,
             password: process.env.SONARQUBE_PASSWORD,
           },
           params: {
-            componentKeys: project.key,
-            additionalFields: 'rules',
-            types: type,
-            rules: rule,
-            severities: severity,
-            files: file,
+            component: project.key,
+            metrics:
+              'bugs,vulnerabilities,sqale_index,duplicated_lines_density,ncloc,coverage,code_smells,reliability_rating,security_rating,sqale_rating',
+            // from: ,
+            // to: ,
             p: page,
             ps: pageSize,
           },
@@ -56,13 +51,8 @@ export class IssuesService {
 
     if (data !== null) {
       return {
-        total: data.total,
-        p: data.p,
-        ps: data.ps,
-        effortTotal: data.effortTotal,
-        issues: data.issues,
-        components: data.components,
-        rules: data.rules,
+        paging: data.paging,
+        measures: data.measures,
       };
     }
 
