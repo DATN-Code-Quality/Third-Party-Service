@@ -19,17 +19,17 @@ import { ResultModule } from './sonarqube/result/result.module';
 
 @Module({
   imports: [
-    // MoodleModule,
-    // UsersModule,
-    // CoursesModule,
-    // CategoryModule,
-    // AssignmentModule,
-    // {
-    //   ...HttpModule.register({
-    //     baseURL: process.env.MOODLE_BASE_URL,
-    //   }),
-    //   global: true,
-    // },
+    MoodleModule,
+    UsersModule,
+    CoursesModule,
+    CategoryModule,
+    AssignmentModule,
+    {
+      ...HttpModule.register({
+        baseURL: process.env.MOODLE_BASE_URL,
+      }),
+      global: true,
+    },
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',

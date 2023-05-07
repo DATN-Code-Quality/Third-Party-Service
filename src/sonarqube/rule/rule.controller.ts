@@ -9,35 +9,32 @@ export class RulesController {
   constructor(private readonly ruleService: RulesService) {}
 
   @GrpcMethod('GRuleService', 'getRuleDetailByKey')
-  async getSourcesBySubmissionId(
+  async getRuleBySubmissionId(
     data: RuleRequest,
     meta: Metadata,
   ): Promise<RuleResponse> {
-    var result: RuleResponse;
-    await this.ruleService
+    return await this.ruleService
       .getRuleDetailByKey(data.key)
       .then((source) => {
         if (source == null) {
-          result = {
+          return {
             message: 'No data Found',
             data: null,
             error: 1,
           };
         }
-        result = {
+        return {
           data: source,
           error: 0,
           message: null,
         };
       })
       .catch((e) => {
-        result = {
+        return {
           message: e,
           data: null,
           error: 1,
         };
       });
-
-    return result;
   }
 }

@@ -6,13 +6,17 @@ import { ValidationErrorFilter } from 'src/common/validate-exception.filter';
 import { ValidationPipe } from 'src/common/validation.pipe';
 import {
   GetSubmissionsOfAssignmentMoodleIdRequest,
+  ScanSubmissionRequest,
   Submission,
 } from './interfaces/Submission';
 import { SubmissionService } from './submission.service';
+import { plainToInstance } from 'class-transformer';
+import { ResultResponse } from 'src/sonarqube/result/interfaces/Result';
 
 @Controller('submission')
 export class SubmissionController {
   constructor(private readonly service: SubmissionService) {}
+
   @GrpcMethod('GSubmissionService', 'GetSubmissionsByAssignmentId')
   @UsePipes(new ValidationPipe())
   @UseFilters(new ValidationErrorFilter())
@@ -21,5 +25,17 @@ export class SubmissionController {
     meta: Metadata,
   ): Promise<OperationResult<Submission[]>> {
     return this.service.getSubmissionsByAssignmentId(data.assignmentMoodleId);
+  }
+
+  @GrpcMethod('GSubmissionService', 'ScanSubmission')
+  async scanSubmission(data: ScanSubmissionRequest, meta: Metadata) {
+    data.timemodified = new Date(
+      data.timemodified.toString().replace('T', ' '),
+    );
+    data.createdAt = new Date(data.timemodified.toString().replace('T', ' '));
+    data.updatedAt = new Date(data.timemodified.toString().replace('T', ' '));
+
+    this.service.scanCodes(data as any);
+    return null;
   }
 }
