@@ -22,6 +22,8 @@ export class IssuesService {
     page: number,
     pageSize: number,
   ): Promise<Issue> {
+    console.log(submissionId);
+
     const project = await this.projectService.findProjectBySubmissionId(
       submissionId,
     );

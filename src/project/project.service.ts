@@ -11,22 +11,17 @@ export class ProjectService {
   ) {}
 
   async findProjectBySubmissionId(submissionId: string): Promise<ProjectDto> {
-    var result: ProjectDto;
-    await this.projectRepository
+    return await this.projectRepository
       .createQueryBuilder('project')
-      .where(
-        'project.submissionId = :submissionId and project.deletedAt is null',
-        {
-          submissionId: submissionId,
-        },
-      )
+      .where('project.submissionId = :submissionId', {
+        submissionId: submissionId,
+      })
       .getOne()
       .then((project) => {
-        result = project;
+        return project;
       })
       .catch((err) => {
-        result = null;
+        return null;
       });
-    return result;
   }
 }
