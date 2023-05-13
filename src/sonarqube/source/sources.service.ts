@@ -13,8 +13,6 @@ export class SourcesService {
   ) {}
 
   async getSourcesByKey(key: string): Promise<Source[]> {
-    console.log(key);
-
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.SONARQUBE_BASE_URL}/sources/lines`, {

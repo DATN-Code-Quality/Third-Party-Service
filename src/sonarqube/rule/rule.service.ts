@@ -13,8 +13,6 @@ export class RulesService {
   ) {}
 
   async getRuleDetailByKey(key: string): Promise<RuleDetail> {
-    console.log(key);
-
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.SONARQUBE_BASE_URL}/rules/show`, {

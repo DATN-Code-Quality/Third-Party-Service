@@ -16,6 +16,7 @@ import { TemporlClientModule } from './temporal/client.module';
 import { UsersModule } from './users/users.module';
 import { RuleModule } from './sonarqube/rule/rule.module';
 import { ResultModule } from './sonarqube/result/result.module';
+import { QualityGatesModule } from './sonarqube/quality-gate/qualityGate.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ResultModule } from './sonarqube/result/result.module';
     SourcesModule,
     RuleModule,
     ResultModule,
+    QualityGatesModule,
     TemporlClientModule,
   ],
   controllers: [AppController],
