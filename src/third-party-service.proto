@@ -18,7 +18,7 @@ message User {
 message Course {    
   string name = 1;
   string moodleId =2;
-  int32 courseMoodleId =3 ;
+  string courseMoodleId =3 ;
   string startAt =4;
   string endAt = 5;
   string detail = 6;
