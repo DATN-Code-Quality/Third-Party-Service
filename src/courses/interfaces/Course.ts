@@ -1,7 +1,7 @@
 import { IsNumber, MIN, Min } from 'class-validator';
 
 export interface CourseModelDTO {
-  id: number;
+  id: string;
   shortname: string;
   fullname: string;
   displayname: string;
@@ -16,7 +16,7 @@ export interface CourseModelDTO {
   enablecompletion: boolean;
   completionhascriteria: boolean;
   completionusertracked: boolean;
-  category: number;
+  categoryid: number;
   completed: boolean;
   startdate: number;
   enddate: number;
