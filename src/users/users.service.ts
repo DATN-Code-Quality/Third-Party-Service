@@ -82,7 +82,21 @@ export class UsersService {
           .pipe(),
       );
       if (data && data.users.length > 0) {
-        const ret = data.users.map(this.buildUser);
+        const ret = data.users.map((user) => {
+          return {
+            name: user.fullname,
+            role:
+              user.roles[0].shortname == 'editingteacher' ||
+              user.roles[0].shortname == 'teacher'
+                ? 'teacher'
+                : 'student',
+            email: user.email,
+            userId: user.username,
+            moodleId: user.id,
+            password: '',
+            status: USER_STATUS.ACTIVE,
+          };
+        });
         return OperationResult.ok(ret);
       }
     } catch (error) {
