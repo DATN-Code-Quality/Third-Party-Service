@@ -25,7 +25,7 @@ export interface User {
   userId: string;
   moodleId: string;
   password: string;
-  status: boolean;
+  status: USER_STATUS;
 }
 
 export interface UserRequest {
@@ -35,4 +35,10 @@ export interface UserRequest {
 export interface UserResponse {
   data: User[];
   error: number;
+}
+
+export enum USER_STATUS {
+  INACTIVE = 0,
+  ACTIVE = 1,
+  BLOCK = 2,
 }

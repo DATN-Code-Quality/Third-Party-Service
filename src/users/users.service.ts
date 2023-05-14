@@ -3,7 +3,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { OperationResult } from 'src/common/operation-result';
 import { moodleArrayInput } from 'src/utils';
-import { User } from './interfaces/User';
+import { USER_STATUS, User } from './interfaces/User';
 
 @Injectable()
 export class UsersService {
@@ -73,7 +73,7 @@ export class UsersService {
       userId: moodleUser.username,
       moodleId: moodleUser.id,
       password: '',
-      status: false,
+      status: USER_STATUS.INACTIVE,
     };
   }
 }
