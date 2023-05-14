@@ -32,6 +32,10 @@ export interface UserRequest {
   emails: string[];
 }
 
+export interface CourseUserRequest {
+  courseid: number;
+}
+
 export interface UserResponse {
   data: User[];
   error: number;

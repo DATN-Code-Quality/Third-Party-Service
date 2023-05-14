@@ -65,6 +65,32 @@ export class UsersService {
     }
   }
 
+  async getUsersByCourseMoodleId(
+    courseid: number,
+  ): Promise<OperationResult<User[]>> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'core_enrol_get_enrolled_users',
+              moodlewsrestformat: 'json',
+              courseid: courseid,
+            },
+          })
+          .pipe(),
+      );
+      if (data && data.users.length > 0) {
+        const ret = data.users.map(this.buildUser);
+        return OperationResult.ok(ret);
+      }
+    } catch (error) {
+      Logger.error(error, 'UsersService.getUsersByCourseMoodleId');
+      return OperationResult.error(error, []);
+    }
+  }
+
   private buildUser(moodleUser: any): User {
     return {
       name: moodleUser.fullname,
