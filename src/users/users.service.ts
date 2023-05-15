@@ -81,8 +81,8 @@ export class UsersService {
           })
           .pipe(),
       );
-      if (data && data.users.length > 0) {
-        const ret = data.users.map((user) => {
+      if (data && data.length > 0) {
+        const ret = data.map((user) => {
           return {
             name: user.fullname,
             role:
