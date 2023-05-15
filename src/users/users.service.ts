@@ -81,13 +81,14 @@ export class UsersService {
           })
           .pipe(),
       );
-      if (data && data.length > 0) {
+      const check = data.some((user) => user.roles.length !== 0);
+      if (data && data.length > 0 && check) {
         const ret = data.map((user) => {
           return {
             name: user.fullname,
             role:
-              user.roles[0].shortname == 'editingteacher' ||
-              user.roles[0].shortname == 'teacher'
+              user.roles[0]?.shortname == 'editingteacher' ||
+              user.roles[0]?.shortname == 'teacher'
                 ? 'teacher'
                 : 'student',
             email: user.email,
@@ -98,6 +99,8 @@ export class UsersService {
           };
         });
         return OperationResult.ok(ret);
+      } else {
+        return OperationResult.ok([] as User[]);
       }
     } catch (error) {
       Logger.error(error, 'UsersService.getUsersByCourseMoodleId');
