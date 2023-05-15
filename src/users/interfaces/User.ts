@@ -33,7 +33,7 @@ export interface UserRequest {
 }
 
 export interface CourseUserRequest {
-  courseid: number;
+  courseMoodleId: number;
 }
 
 export interface UserResponse {

@@ -27,6 +27,6 @@ export class UsersController {
     data: CourseUserRequest,
     meta: Metadata,
   ): Promise<OperationResult<User[]>> {
-    return this.userService.getUsersByCourseMoodleId(data.courseid);
+    return this.userService.getUsersByCourseMoodleId(data.courseMoodleId);
   }
 }
