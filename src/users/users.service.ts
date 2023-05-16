@@ -1,7 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { OperationResult } from 'src/common/operation-result';
+import { OperationResult, ResultStatus } from 'src/common/operation-result';
 import { moodleArrayInput } from 'src/utils';
 import { USER_STATUS, User } from './interfaces/User';
 
@@ -100,7 +100,11 @@ export class UsersService {
         });
         return OperationResult.ok(ret);
       } else {
-        return OperationResult.ok([] as User[]);
+        return new OperationResult(
+          ResultStatus.EMPTY_ARRAY,
+          [],
+          'No participants in this course',
+        );
       }
     } catch (error) {
       Logger.error(error, 'UsersService.getUsersByCourseMoodleId');
