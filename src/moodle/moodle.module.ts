@@ -8,7 +8,7 @@ import { genEndpoint } from 'src/utils';
   providers: [
     {
       provide: 'MOODLE_MODULE',
-      useFactory: async (httpService: HttpService): Promise<HttpService> => {
+      useFactory: async (httpService: HttpService): Promise<String> => {
         const logger = new Logger(MoodleModule.name);
         const { data } = await firstValueFrom(
           httpService

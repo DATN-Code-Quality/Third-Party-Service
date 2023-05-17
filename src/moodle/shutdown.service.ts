@@ -7,7 +7,7 @@ export class ShutdownService implements OnModuleDestroy {
 
   // Your hook will be executed
   onModuleDestroy() {
-    console.log('Executing OnDestroy Hook');
+    // console.log('Executing OnDestroy Hook');
   }
 
   // Subscribe to the shutdown in your main.ts
