@@ -84,13 +84,12 @@ export class UsersService {
       const check = data.some((user) => user.roles.length !== 0);
       if (data && data.length > 0 && check) {
         const ret = data.map((user) => {
+          const role = user.roles.some(
+            (r) => r.shortname == 'editingteacher' || r.shortname == 'teacher',
+          );
           return {
             name: user.fullname,
-            role:
-              user.roles[0]?.shortname == 'editingteacher' ||
-              user.roles[0]?.shortname == 'teacher'
-                ? 'teacher'
-                : 'student',
+            role: role ? 'teacher' : 'student',
             email: user.email,
             userId: user.username,
             moodleId: user.id,
