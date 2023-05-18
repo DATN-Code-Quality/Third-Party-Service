@@ -8,7 +8,7 @@ import { RuleRequest, RuleResponse } from './interfaces/Rule';
 export class RulesController {
   constructor(private readonly ruleService: RulesService) {}
 
-  @GrpcMethod('GRuleService', 'getRuleDetailByKey')
+  @GrpcMethod('GSonarqubeService', 'getRuleDetailByKey')
   async getRuleBySubmissionId(
     data: RuleRequest,
     meta: Metadata,

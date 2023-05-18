@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { OperationResult } from 'src/common/operation-result';
+import { OperationResult, ResultStatus } from 'src/common/operation-result';
 import { moodleArrayInput } from 'src/utils';
-import { User } from './interfaces/User';
+import { USER_STATUS, User } from './interfaces/User';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +65,52 @@ export class UsersService {
     }
   }
 
+  async getUsersByCourseMoodleId(
+    courseid: number,
+  ): Promise<OperationResult<User[]>> {
+    try {
+      const { data } = await firstValueFrom(
+        this.httpService
+          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+            params: {
+              wstoken: this.token,
+              wsfunction: 'core_enrol_get_enrolled_users',
+              moodlewsrestformat: 'json',
+              courseid: courseid,
+            },
+          })
+          .pipe(),
+      );
+      const check = data.some((user) => user.roles.length !== 0);
+      if (data && data.length > 0 && check) {
+        const ret = data.map((user) => {
+          const role = user.roles.some(
+            (r) => r.shortname == 'editingteacher' || r.shortname == 'teacher',
+          );
+          return {
+            name: user.fullname,
+            role: role ? 'teacher' : 'student',
+            email: user.email,
+            userId: user.username,
+            moodleId: user.id,
+            password: '',
+            status: USER_STATUS.ACTIVE,
+          };
+        });
+        return OperationResult.ok(ret);
+      } else {
+        return new OperationResult(
+          ResultStatus.EMPTY_ARRAY,
+          [],
+          'No participants in this course',
+        );
+      }
+    } catch (error) {
+      Logger.error(error, 'UsersService.getUsersByCourseMoodleId');
+      return OperationResult.error(error, []);
+    }
+  }
+
   private buildUser(moodleUser: any): User {
     return {
       name: moodleUser.fullname,
@@ -73,7 +119,7 @@ export class UsersService {
       userId: moodleUser.username,
       moodleId: moodleUser.id,
       password: '',
-      status: false,
+      status: USER_STATUS.INACTIVE,
     };
   }
 }

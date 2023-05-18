@@ -25,7 +25,6 @@ export class IssuesService {
     const project = await this.projectService.findProjectBySubmissionId(
       submissionId,
     );
-    console.log(project);
     if (project == null) {
       return null;
     }

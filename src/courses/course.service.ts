@@ -126,7 +126,7 @@ export class CoursesService {
       endAt: data.enddate + '',
       detail: '',
       summary: data.summary,
-      categoryId: data.category + '',
+      categoryId: data.categoryid + '',
     };
   }
 }

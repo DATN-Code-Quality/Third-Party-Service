@@ -5,6 +5,7 @@ export enum ResultStatus {
   NOT_AUTHORIZED,
   NOT_FOUND,
   INVALID_INPUT,
+  EMPTY_ARRAY,
 }
 
 export class OperationResult<D> {

@@ -8,7 +8,7 @@ import { IssuesService } from './issues.service';
 export class IssuesController {
   constructor(private readonly issueService: IssuesService) {}
 
-  @GrpcMethod('GIssueService', 'getIssuesBySubmissionId')
+  @GrpcMethod('GSonarqubeService', 'getIssuesBySubmissionId')
   async getIssuesBySubmissionId(
     data: IssueRequest,
     meta: Metadata,

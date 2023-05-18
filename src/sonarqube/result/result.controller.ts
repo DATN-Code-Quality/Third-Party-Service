@@ -8,7 +8,7 @@ import { ResultRequest, ResultResponse } from './interfaces/Result';
 export class ResultController {
   constructor(private readonly resultService: ResultService) {}
 
-  @GrpcMethod('GResultService', 'getResultsBySubmissionId')
+  @GrpcMethod('GSonarqubeService', 'getResultsBySubmissionId')
   async getIssuesBySubmissionId(
     data: ResultRequest,
     meta: Metadata,
