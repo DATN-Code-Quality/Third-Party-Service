@@ -17,7 +17,6 @@ describe('schedulerSpec', () => {
 
   it.only('should be defined', () => {
     const res = service.startJob('2', 2);
-    console.log({ res });
 
     // expect(service.startJob).toBeDefined();
   });
