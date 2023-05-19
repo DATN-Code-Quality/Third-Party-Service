@@ -5,6 +5,7 @@ import { SubmissionReqDto } from 'src/submission/req/submission-req.dto';
 import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
 import { SubmissionDBService } from 'src/submission/submissionDB.service';
 import { SubmissionService } from '../submission/submission.service';
+import { UsersDBService } from 'src/users/usersDB.service';
 
 @Injectable()
 export class SchedulerService {
@@ -16,6 +17,7 @@ export class SchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     private submissionService: SubmissionService,
     private submissionDBService: SubmissionDBService,
+    private usersDBService: UsersDBService,
     @Inject('MOODLE_MODULE') private readonly token: string,
   ) {}
 
@@ -90,6 +92,14 @@ export class SchedulerService {
             );
 
           Logger.debug(`submissionResDto: ${JSON.stringify(submissionResDto)}`);
+
+          const findUser = await this.usersDBService.findUserByMoodleId(
+            submission.userId,
+          );
+
+          if (!findUser.isOk()) {
+            submission = { ...submission, userId: findUser.data.id };
+          } else return;
 
           // step 3: save to db
           let ret = null;
