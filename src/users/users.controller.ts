@@ -2,7 +2,7 @@ import { Metadata } from '@grpc/grpc-js';
 import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { OperationResult } from 'src/common/operation-result';
-import { User, UserRequest } from './interfaces/User';
+import { CourseUserRequest, User, UserRequest } from './interfaces/User';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -20,5 +20,13 @@ export class UsersController {
   @GrpcMethod('GUserService', 'GetAllUsers')
   async getAllUsers(meta: Metadata): Promise<OperationResult<User[]>> {
     return this.userService.getAllUsers();
+  }
+
+  @GrpcMethod('GUserService', 'GetUsersByCourseMoodleId')
+  async getUsersByCourseMoodleId(
+    data: CourseUserRequest,
+    meta: Metadata,
+  ): Promise<OperationResult<User[]>> {
+    return this.userService.getUsersByCourseMoodleId(data.courseMoodleId);
   }
 }
