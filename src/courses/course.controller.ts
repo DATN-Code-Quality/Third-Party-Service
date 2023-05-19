@@ -23,9 +23,7 @@ export class CoursesController {
 
   @GrpcMethod('GCourseService', 'GetAllCourses')
   async getAllCourses(meta: Metadata): Promise<OperationResult<Course[]>> {
-    console.log(await this.service.getAllCourses());
-    return null;
-    // return this.service.getAllCourses();
+    return this.service.getAllCourses();
   }
 
   @GrpcMethod('GCourseService', 'GetUsersCourse')
