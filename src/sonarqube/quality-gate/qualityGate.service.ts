@@ -10,12 +10,16 @@ import {
   converConditionFromArrayToJson,
 } from './interfaces/qualityGate';
 import axios from 'axios';
+import { SubmissionDBService } from 'src/submission/submissionDB.service';
+import { SubmissionService } from 'src/submission/submission.service';
 
 @Injectable()
 export class QualityGateService {
   constructor(
     // @Inject('MOODLE_MODULE') private readonly token: string,
     private readonly httpService: HttpService,
+    private readonly submissionDBService: SubmissionDBService,
+    private readonly submissionService: SubmissionService,
   ) {}
 
   async createQualityGate(
@@ -97,7 +101,7 @@ export class QualityGateService {
 
     for (let i = 0; i < CONDITION.length; i++) {
       if (conditionJson[`${CONDITION[i].key}`] != null) {
-        firstValueFrom(
+        await firstValueFrom(
           this.httpService
             .post(
               `${process.env.SONARQUBE_BASE_URL}/qualitygates/update_condition`,
@@ -119,6 +123,15 @@ export class QualityGateService {
         ).catch((e) => {
           throw e;
         });
+      }
+    }
+
+    // Call to scanner service to scan all submissions in this assignment
+    const submisisons =
+      await this.submissionDBService.findSubmissionsByAssigmentId(assignmentId);
+    if (submisisons.isOk()) {
+      for (let i = 0; i < submisisons.data.length; i++) {
+        await this.submissionService.scanCodes(submisisons.data[i] as any);
       }
     }
 

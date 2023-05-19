@@ -41,6 +41,9 @@ export class SubmissionReqDto extends BaseEntity {
   grade: number | null;
 
   @IsString()
-  @Column('varchar', { name: 'submissionMoodleId', length: 10 })
+  @Column('varchar', {
+    name: 'submissionMoodleId',
+    length: 10,
+  })
   submissionMoodleId: string;
 }
