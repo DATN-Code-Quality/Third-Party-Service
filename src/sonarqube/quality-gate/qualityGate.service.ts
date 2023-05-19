@@ -43,28 +43,33 @@ export class QualityGateService {
     if (data['id']) {
       const conditionJson = converConditionFromArrayToJson(conditions);
       for (let i = 0; i < CONDITION.length; i++) {
-        firstValueFrom(
-          this.httpService
-            .post(
-              `${process.env.SONARQUBE_BASE_URL}/qualitygates/create_condition`,
-              null,
-              {
-                auth: {
-                  username: process.env.SONARQUBE_USERNAME,
-                  password: process.env.SONARQUBE_PASSWORD,
+        if (
+          conditionJson[`${CONDITION[i].key}`] ||
+          conditionJson[`${CONDITION[i].key}`] === 0
+        ) {
+          firstValueFrom(
+            this.httpService
+              .post(
+                `${process.env.SONARQUBE_BASE_URL}/qualitygates/create_condition`,
+                null,
+                {
+                  auth: {
+                    username: process.env.SONARQUBE_USERNAME,
+                    password: process.env.SONARQUBE_PASSWORD,
+                  },
+                  params: {
+                    error: conditionJson[`${CONDITION[i].key}`],
+                    gateName: assignmentId,
+                    metric: CONDITION[i].key,
+                    op: CONDITION[i].op,
+                  },
                 },
-                params: {
-                  error: conditionJson[`${CONDITION[i].key}`],
-                  gateName: assignmentId,
-                  metric: CONDITION[i].key,
-                  op: CONDITION[i].op,
-                },
-              },
-            )
-            .pipe(),
-        ).catch((e) => {
-          throw e;
-        });
+              )
+              .pipe(),
+          ).catch((e) => {
+            throw e;
+          });
+        }
       }
       return data['id'];
     }
