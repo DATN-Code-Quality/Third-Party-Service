@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
+import { SubmissionReqDto } from 'src/submission/req/submission-req.dto';
 import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
 import { SubmissionDBService } from 'src/submission/submissionDB.service';
 import { SubmissionService } from '../submission/submission.service';
@@ -65,7 +66,11 @@ export class SchedulerService {
           );
         }
 
-        let submissions = result.data;
+        let submissions = result.data.map((item) => {
+          const newItem = { ...item };
+          delete newItem.id;
+          return newItem;
+        });
 
         submissions = submissions.filter(
           (submission) => submission.link && submission.link !== '',
@@ -97,7 +102,7 @@ export class SchedulerService {
             ret = { ...submission, id: submissionResDto.data.id };
           } else {
             const { data } = await this.submissionDBService.create(
-              SubmissionResDto,
+              SubmissionReqDto,
               submission as any,
             );
             ret = { ...data };
