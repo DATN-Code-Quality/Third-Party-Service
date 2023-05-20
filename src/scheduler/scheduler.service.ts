@@ -1,9 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import { SubmissionReqDto } from 'src/submission/req/submission-req.dto';
 import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
 import { SubmissionDBService } from 'src/submission/submissionDB.service';
+import { UsersDBService } from 'src/users/usersDB.service';
 import { SubmissionService } from '../submission/submission.service';
 
 @Injectable()
@@ -16,6 +16,7 @@ export class SchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     private submissionService: SubmissionService,
     private submissionDBService: SubmissionDBService,
+    private usersDBService: UsersDBService,
     @Inject('MOODLE_MODULE') private readonly token: string,
   ) {}
 
@@ -76,7 +77,7 @@ export class SchedulerService {
           (submission) => submission.link && submission.link !== '',
         );
 
-        Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
+        // Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
 
         submissions = submissions.map((submission) => ({
           ...submission,
@@ -84,12 +85,27 @@ export class SchedulerService {
         }));
 
         submissions.map(async (submission) => {
+          const findUser = await this.usersDBService.findUserByMoodleId(
+            submission.userId,
+          );
+
+          if (findUser.isOk()) {
+            submission = { ...submission, userId: findUser.data.id };
+          } else return;
+
           const submissionResDto =
             await this.submissionDBService.findSubmissionWithMoodleId(
               submission.submissionMoodleId,
             );
 
-          Logger.debug(`submissionResDto: ${JSON.stringify(submissionResDto)}`);
+          // đoạn này có nghĩa là submission có trong DB và không có modified thì skip
+          const timemodified = new Date(submission.timemodified);
+          if (
+            submissionResDto.data !== null &&
+            Date.now() - timemodified.getTime() < this.INTERVAL * 60 * 1000
+          ) {
+            return;
+          }
 
           // step 3: save to db
           let ret = null;
@@ -102,7 +118,7 @@ export class SchedulerService {
             ret = { ...submission, id: submissionResDto.data.id };
           } else {
             const { data } = await this.submissionDBService.create(
-              SubmissionReqDto,
+              SubmissionResDto,
               submission as any,
             );
             ret = { ...data };

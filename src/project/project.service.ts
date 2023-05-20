@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ProjectDto } from './req/project.dto';
+import { ProjectReqDto } from './req/project-req.dto';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectRepository(ProjectDto)
-    private readonly projectRepository: Repository<ProjectDto>,
+    @InjectRepository(ProjectReqDto)
+    private readonly projectRepository: Repository<ProjectReqDto>,
   ) {}
 
-  async findProjectBySubmissionId(submissionId: string): Promise<ProjectDto> {
+  async findProjectBySubmissionId(
+    submissionId: string,
+  ): Promise<ProjectReqDto> {
     return await this.projectRepository
       .createQueryBuilder('project')
       .where('project.submissionId = :submissionId', {

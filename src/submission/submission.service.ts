@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { TaskQueue, Workflows } from 'src/temporal/workflows';
 import { Submission } from './interfaces/Submission';
 import { OperationResult } from 'src/common/operation-result';
+import { SUBMISSION_STATUS } from './req/submission-req.dto';
 
 @Injectable()
 export class SubmissionService {
@@ -57,10 +58,10 @@ export class SubmissionService {
         ]?.fileurl || '',
       note: moodleSubmission.status,
       submitType: moodleSubmission.plugins[0].type,
-      timemodified: new Date(moodleSubmission.timemodified).toString(),
+      timemodified: new Date(moodleSubmission.timemodified * 1000).toString(),
       userId: moodleSubmission.userid,
       origin: '',
-      status: moodleSubmission.status,
+      status: SUBMISSION_STATUS.SUBMITTED,
       grade: null,
       submissionMoodleId: moodleSubmission.id,
     };

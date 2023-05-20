@@ -9,7 +9,7 @@ export interface Submission {
   timemodified: string;
   userId: string;
   origin: string;
-  status: string;
+  status: number;
   grade: number | null;
   submissionMoodleId: string;
 }

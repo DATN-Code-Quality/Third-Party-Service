@@ -43,7 +43,8 @@
     "nestjs-temporal": "^1.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
-    "typeorm": "^0.3.13"
+    "typeorm": "^0.3.13",
+    "winston": "^3.8.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
