@@ -41,36 +41,9 @@ export class QualityGateService {
     });
 
     if (data['id']) {
-      const conditionJson = converConditionFromArrayToJson(conditions);
-      for (let i = 0; i < CONDITION.length; i++) {
-        if (
-          conditionJson[`${CONDITION[i].key}`] ||
-          conditionJson[`${CONDITION[i].key}`] === 0
-        ) {
-          firstValueFrom(
-            this.httpService
-              .post(
-                `${process.env.SONARQUBE_BASE_URL}/qualitygates/create_condition`,
-                null,
-                {
-                  auth: {
-                    username: process.env.SONARQUBE_USERNAME,
-                    password: process.env.SONARQUBE_PASSWORD,
-                  },
-                  params: {
-                    error: conditionJson[`${CONDITION[i].key}`],
-                    gateName: assignmentId,
-                    metric: CONDITION[i].key,
-                    op: CONDITION[i].op,
-                  },
-                },
-              )
-              .pipe(),
-          ).catch((e) => {
-            throw e;
-          });
-        }
-      }
+      await this.createConditions(assignmentId, conditions).catch((e) => {
+        return '';
+      });
       return data['id'];
     }
     return '';
@@ -80,7 +53,6 @@ export class QualityGateService {
     assignmentId: string,
     conditions: Condition[],
   ): Promise<string> {
-    // assignmentId = '042c3744-78e8-4fad-a96d-86bd7e168ce1';
     const { data } = await firstValueFrom(
       this.httpService
         .get(`${process.env.SONARQUBE_BASE_URL}/qualitygates/show`, {
@@ -98,14 +70,23 @@ export class QualityGateService {
       throw e;
     });
 
+    // Những condition sẽ insert/update
     const conditionJson = converConditionFromArrayToJson(conditions);
-    const conditionIdJson = {};
+
+    // Lấy những conditions đã set trước đó
+    const updatedConditionIdJson = {};
+    const deletedConditionIdJson = {};
+
     data.conditions.forEach((condition) => {
-      conditionIdJson[`${condition.metric}`] = condition.id;
+      if (conditionJson[`${condition.metric}`] != null) {
+        updatedConditionIdJson[`${condition.metric}`] = condition.id;
+      } else {
+        deletedConditionIdJson[`${condition.metric}`] = condition.id;
+      }
     });
 
     for (let i = 0; i < CONDITION.length; i++) {
-      if (conditionJson[`${CONDITION[i].key}`] != null) {
+      if (updatedConditionIdJson[`${CONDITION[i].key}`] != null) {
         await firstValueFrom(
           this.httpService
             .post(
@@ -118,7 +99,7 @@ export class QualityGateService {
                 },
                 params: {
                   error: conditionJson[`${CONDITION[i].key}`],
-                  id: conditionIdJson[`${CONDITION[i].key}`],
+                  id: updatedConditionIdJson[`${CONDITION[i].key}`],
                   metric: CONDITION[i].key,
                   op: CONDITION[i].op,
                 },
@@ -128,8 +109,40 @@ export class QualityGateService {
         ).catch((e) => {
           throw e;
         });
+      } else {
+        if (deletedConditionIdJson[`${CONDITION[i].key}`] != null) {
+          await firstValueFrom(
+            this.httpService
+              .post(
+                `${process.env.SONARQUBE_BASE_URL}/qualitygates/delete_condition`,
+                null,
+                {
+                  auth: {
+                    username: process.env.SONARQUBE_USERNAME,
+                    password: process.env.SONARQUBE_PASSWORD,
+                  },
+                  params: {
+                    id: deletedConditionIdJson[`${CONDITION[i].key}`],
+                  },
+                },
+              )
+              .pipe(),
+          ).catch((e) => {
+            throw e;
+          });
+        }
       }
     }
+
+    for (let i = 0; i < conditions.length; i++) {
+      if (updatedConditionIdJson[conditions[i].key]) {
+        conditions[i].error = null;
+      }
+    }
+
+    await this.createConditions(assignmentId, conditions).catch((e) => {
+      throw e;
+    });
 
     // Call to scanner service to scan all submissions in this assignment
     const submisisons =
@@ -141,5 +154,38 @@ export class QualityGateService {
     }
 
     return 'Update condition successfully';
+  }
+
+  async createConditions(assignmentId: string, conditions: Condition[]) {
+    const conditionJson = converConditionFromArrayToJson(conditions);
+    for (let i = 0; i < CONDITION.length; i++) {
+      if (
+        conditionJson[`${CONDITION[i].key}`] ||
+        conditionJson[`${CONDITION[i].key}`] === 0
+      ) {
+        firstValueFrom(
+          this.httpService
+            .post(
+              `${process.env.SONARQUBE_BASE_URL}/qualitygates/create_condition`,
+              null,
+              {
+                auth: {
+                  username: process.env.SONARQUBE_USERNAME,
+                  password: process.env.SONARQUBE_PASSWORD,
+                },
+                params: {
+                  error: conditionJson[`${CONDITION[i].key}`],
+                  gateName: assignmentId,
+                  metric: CONDITION[i].key,
+                  op: CONDITION[i].op,
+                },
+              },
+            )
+            .pipe(),
+        ).catch((e) => {
+          throw e;
+        });
+      }
+    }
   }
 }
