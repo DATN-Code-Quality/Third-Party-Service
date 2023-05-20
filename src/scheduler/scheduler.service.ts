@@ -1,11 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
-import { SubmissionReqDto } from 'src/submission/req/submission-req.dto';
 import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
 import { SubmissionDBService } from 'src/submission/submissionDB.service';
-import { SubmissionService } from '../submission/submission.service';
 import { UsersDBService } from 'src/users/usersDB.service';
+import { SubmissionService } from '../submission/submission.service';
 
 @Injectable()
 export class SchedulerService {
@@ -74,11 +73,16 @@ export class SchedulerService {
           return newItem;
         });
 
-        submissions = submissions.filter(
-          (submission) => submission.link && submission.link !== '',
-        );
+        submissions = submissions
+          .filter((submission) => submission.link && submission.link !== '')
+          .filter((submissions) => {
+            const timemodified = new Date(submissions.timemodified);
+            return (
+              Date.now() - timemodified.getTime() < this.INTERVAL * 60 * 1000
+            );
+          });
 
-        Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
+        // Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
 
         submissions = submissions.map((submission) => ({
           ...submission,
@@ -91,13 +95,13 @@ export class SchedulerService {
               submission.submissionMoodleId,
             );
 
-          Logger.debug(`submissionResDto: ${JSON.stringify(submissionResDto)}`);
+          // Logger.debug(`submissionResDto: ${JSON.stringify(submissionResDto)}`);
 
           const findUser = await this.usersDBService.findUserByMoodleId(
             submission.userId,
           );
 
-          if (!findUser.isOk()) {
+          if (findUser.isOk()) {
             submission = { ...submission, userId: findUser.data.id };
           } else return;
 
@@ -112,7 +116,7 @@ export class SchedulerService {
             ret = { ...submission, id: submissionResDto.data.id };
           } else {
             const { data } = await this.submissionDBService.create(
-              SubmissionReqDto,
+              SubmissionResDto,
               submission as any,
             );
             ret = { ...data };

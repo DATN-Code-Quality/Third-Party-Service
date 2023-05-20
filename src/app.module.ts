@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssignmentModule } from './assignment/assignment.module';
 import { AssignmentReqDto } from './assignment/req/assignment-req.dto';
+import { CategoryReqDto } from './category/req/category-req.dto';
 import { CategoryModule } from './courses/category/category.module';
 import { CoursesModule } from './courses/course.module';
 import { CourseReqDto } from './courses/req/course-req.dto';
