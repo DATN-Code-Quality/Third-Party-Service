@@ -4,19 +4,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssignmentModule } from './assignment/assignment.module';
+import { AssignmentReqDto } from './assignment/req/assignment-req.dto';
 import { CategoryModule } from './courses/category/category.module';
 import { CoursesModule } from './courses/course.module';
+import { CourseReqDto } from './courses/req/course-req.dto';
 import { MoodleModule } from './moodle/moodle.module';
 import { ProjectModule } from './project/project.module';
-import { ProjectDto } from './project/req/project.dto';
+import { ProjectReqDto } from './project/req/project-req.dto';
 import { IssuesModule } from './sonarqube/issue/issues.module';
+import { QualityGatesModule } from './sonarqube/quality-gate/qualityGate.module';
+import { ResultModule } from './sonarqube/result/result.module';
+import { RuleModule } from './sonarqube/rule/rule.module';
 import { SourcesModule } from './sonarqube/source/sources.module';
 import { SubmissionReqDto } from './submission/req/submission-req.dto';
 import { TemporlClientModule } from './temporal/client.module';
+import { UserCourseReqDto } from './user-course/req/user-course-req.dto';
+import { UserReqDto } from './users/req/user-req.dto';
 import { UsersModule } from './users/users.module';
-import { RuleModule } from './sonarqube/rule/rule.module';
-import { ResultModule } from './sonarqube/result/result.module';
-import { QualityGatesModule } from './sonarqube/quality-gate/qualityGate.module';
+import { CategoryReqDto } from './category/req/category-req.dto';
 
 @Module({
   imports: [
@@ -38,7 +43,15 @@ import { QualityGatesModule } from './sonarqube/quality-gate/qualityGate.module'
       username: 'root',
       password: '04042001',
       database: 'sonarqube',
-      entities: [ProjectDto, SubmissionReqDto],
+      entities: [
+        UserReqDto,
+        CategoryReqDto,
+        CourseReqDto,
+        UserCourseReqDto,
+        AssignmentReqDto,
+        SubmissionReqDto,
+        ProjectReqDto,
+      ],
       logging: 'all',
       synchronize: true,
     }),
