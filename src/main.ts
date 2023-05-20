@@ -3,11 +3,16 @@ import { Transport } from '@nestjs/microservices';
 import * as dotenv from 'dotenv';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { Logger } from './logger/logger.service';
 
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const useCustomLogger = process.env.USE_CUSTOME_LOGGER === 'true';
+
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: useCustomLogger,
+  });
   app.connectMicroservice({
     transport: Transport.GRPC,
     options: {
@@ -18,7 +23,12 @@ async function bootstrap() {
     },
   });
   app.enableShutdownHooks();
+
+  if (useCustomLogger) {
+    app.useLogger(app.get(Logger));
+  }
+
+  app.listen(5000);
   await app.startAllMicroservices();
-  // app.listen(5000);
 }
 bootstrap();

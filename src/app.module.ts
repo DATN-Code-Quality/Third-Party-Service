@@ -21,7 +21,7 @@ import { TemporlClientModule } from './temporal/client.module';
 import { UserCourseReqDto } from './user-course/req/user-course-req.dto';
 import { UserReqDto } from './users/req/user-req.dto';
 import { UsersModule } from './users/users.module';
-import { CategoryReqDto } from './category/req/category-req.dto';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -62,6 +62,7 @@ import { CategoryReqDto } from './category/req/category-req.dto';
     ResultModule,
     QualityGatesModule,
     TemporlClientModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
