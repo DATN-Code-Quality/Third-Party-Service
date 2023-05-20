@@ -1,6 +1,8 @@
 import { IsOptional, IsString } from 'class-validator';
 import { BaseEntity } from 'src/common/base.entity';
-import { Column, Entity } from 'typeorm';
+import { SubmissionReqDto } from 'src/submission/req/submission-req.dto';
+import { UserCourseReqDto } from 'src/user-course/req/user-course-req.dto';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 export enum USER_STATUS {
   INACTIVE = 0,
@@ -26,7 +28,6 @@ export class UserReqDto extends BaseEntity {
   @Column('varchar', { name: 'userId', length: 20, unique: true })
   userId: string;
 
-  // @IsString()
   @Column('varchar', {
     name: 'moodleId',
     length: 255,
@@ -35,13 +36,16 @@ export class UserReqDto extends BaseEntity {
   })
   moodleId: string;
 
-  // @IsString()
   @IsOptional()
   @Column('varchar', { name: 'password', length: 255 })
   password: string;
 
-  // @IsBoolean()
   @Column('tinyint', { name: 'status', width: 1 })
   status: USER_STATUS;
 
+  @OneToMany(() => SubmissionReqDto, (submission) => submission.user)
+  submissions: SubmissionReqDto[];
+
+  @OneToMany(() => UserCourseReqDto, (userCourse) => userCourse.user)
+  userCourses: UserCourseReqDto[];
 }
