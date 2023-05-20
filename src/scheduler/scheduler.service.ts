@@ -73,14 +73,9 @@ export class SchedulerService {
           return newItem;
         });
 
-        submissions = submissions
-          .filter((submission) => submission.link && submission.link !== '')
-          .filter((submissions) => {
-            const timemodified = new Date(submissions.timemodified);
-            return (
-              Date.now() - timemodified.getTime() < this.INTERVAL * 60 * 1000
-            );
-          });
+        submissions = submissions.filter(
+          (submission) => submission.link && submission.link !== '',
+        );
 
         // Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
 
@@ -90,13 +85,6 @@ export class SchedulerService {
         }));
 
         submissions.map(async (submission) => {
-          const submissionResDto =
-            await this.submissionDBService.findSubmissionWithMoodleId(
-              submission.submissionMoodleId,
-            );
-
-          // Logger.debug(`submissionResDto: ${JSON.stringify(submissionResDto)}`);
-
           const findUser = await this.usersDBService.findUserByMoodleId(
             submission.userId,
           );
@@ -104,6 +92,20 @@ export class SchedulerService {
           if (findUser.isOk()) {
             submission = { ...submission, userId: findUser.data.id };
           } else return;
+
+          const submissionResDto =
+            await this.submissionDBService.findSubmissionWithMoodleId(
+              submission.submissionMoodleId,
+            );
+
+          // đoạn này có nghĩa là submission có trong DB và không có modified thì skip
+          const timemodified = new Date(submission.timemodified);
+          if (
+            submissionResDto.data !== null &&
+            Date.now() - timemodified.getTime() < this.INTERVAL * 60 * 1000
+          ) {
+            return;
+          }
 
           // step 3: save to db
           let ret = null;
