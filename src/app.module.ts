@@ -5,9 +5,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AssignmentModule } from './assignment/assignment.module';
 import { AssignmentReqDto } from './assignment/req/assignment-req.dto';
+import { CategoryReqDto } from './category/req/category-req.dto';
 import { CategoryModule } from './courses/category/category.module';
 import { CoursesModule } from './courses/course.module';
 import { CourseReqDto } from './courses/req/course-req.dto';
+import { LoggerModule } from './logger/logger.module';
 import { MoodleModule } from './moodle/moodle.module';
 import { ProjectModule } from './project/project.module';
 import { ProjectReqDto } from './project/req/project-req.dto';
@@ -21,7 +23,6 @@ import { TemporlClientModule } from './temporal/client.module';
 import { UserCourseReqDto } from './user-course/req/user-course-req.dto';
 import { UserReqDto } from './users/req/user-req.dto';
 import { UsersModule } from './users/users.module';
-import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [

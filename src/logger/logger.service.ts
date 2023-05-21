@@ -15,7 +15,7 @@ export class Logger implements LoggerService {
     ),
     transports: [
       new transports.File({
-        level: 'info',
+        level: 'debug',
         filename: process.env.LOG_FILE_PATH,
       }),
     ],

@@ -73,11 +73,11 @@ export class SchedulerService {
           return newItem;
         });
 
+        Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
+
         submissions = submissions.filter(
           (submission) => submission.link && submission.link !== '',
         );
-
-        // Logger.debug(`submissions: ${JSON.stringify(submissions)}`);
 
         submissions = submissions.map((submission) => ({
           ...submission,
@@ -99,7 +99,7 @@ export class SchedulerService {
             );
 
           // đoạn này có nghĩa là submission có trong DB và không có modified thì skip
-          const timemodified = new Date(submission.timemodified);
+          const timemodified = submission.timemodified;
           if (
             submissionResDto.data !== null &&
             Date.now() - timemodified.getTime() < this.INTERVAL * 60 * 1000

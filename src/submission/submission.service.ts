@@ -58,7 +58,9 @@ export class SubmissionService {
         ]?.fileurl || '',
       note: moodleSubmission.status,
       submitType: moodleSubmission.plugins[0].type,
-      timemodified: new Date(moodleSubmission.timemodified * 1000).toString(),
+      timemodified: new Date(
+        parseInt(moodleSubmission.timemodified, 10) * 1000,
+      ),
       userId: moodleSubmission.userid,
       origin: '',
       status: SUBMISSION_STATUS.SUBMITTED,
