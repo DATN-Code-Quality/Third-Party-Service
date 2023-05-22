@@ -22,6 +22,7 @@ import { UserCourseReqDto } from './user-course/req/user-course-req.dto';
 import { UserReqDto } from './users/req/user-req.dto';
 import { UsersModule } from './users/users.module';
 import { LoggerModule } from './logger/logger.module';
+import { CategoryReqDto } from './category/req/category-req.dto';
 
 @Module({
   imports: [
