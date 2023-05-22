@@ -102,7 +102,7 @@ export class SchedulerService {
           const timemodified = submission.timemodified;
           if (
             submissionResDto.data !== null &&
-            Date.now() - timemodified.getTime() < this.INTERVAL * 60 * 1000
+            Date.now() - timemodified.getTime() > this.INTERVAL * 60 * 1000
           ) {
             return;
           }
