@@ -21,8 +21,7 @@ export class SchedulerService {
   ) {}
 
   startJob(id: string, moodleId: number, dueTime: number) {
-    this.addCronJob(id, moodleId, this.INTERVAL);
-    this.addTimeout(moodleId, dueTime - Date.now());
+    this.addCronJob(id, moodleId, this.INTERVAL, dueTime);
   }
 
   stopJob(moodleId: number) {
@@ -35,7 +34,12 @@ export class SchedulerService {
     this.startJob(id, moodleId, dueTime);
   }
 
-  private addCronJob(id: string, moodleId: number, minutes: number) {
+  private addCronJob(
+    id: string,
+    moodleId: number,
+    minutes: number,
+    dueTime: number,
+  ) {
     const name = this.buildCronJobName(moodleId);
 
     let job = null;
@@ -53,6 +57,11 @@ export class SchedulerService {
     job = new CronJob(
       `${Math.floor(Math.random() * 60)} */${minutes} * * * *`,
       async () => {
+        if (Date.now() > dueTime) {
+          this.schedulerRegistry.deleteCronJob(name);
+          Logger.log(`Job ${name} is deleted`);
+        }
+
         Logger.debug(`${name} is running...`);
 
         // step 1: get all submissions
@@ -142,30 +151,30 @@ export class SchedulerService {
     job.start();
   }
 
-  private addTimeout(assignmentId: number, milliseconds: number) {
-    const timeoutJob = this.buildTimeoutName(assignmentId);
-    const cronJob = this.buildCronJobName(assignmentId);
+  // private addTimeout(assignmentId: number, milliseconds: number) {
+  //   const timeoutJob = this.buildTimeoutName(assignmentId);
+  //   const cronJob = this.buildCronJobName(assignmentId);
 
-    const callback = () => {
-      Logger.debug(`${timeoutJob} is stopping...`);
-      this.schedulerRegistry.deleteCronJob(cronJob);
-      // send notif / assignment stats to teacher
-    };
+  //   const callback = () => {
+  //     Logger.debug(`${timeoutJob} is stopping...`);
+  //     this.schedulerRegistry.deleteCronJob(cronJob);
+  //     // send notif / assignment stats to teacher
+  //   };
 
-    let timeout = null;
+  //   let timeout = null;
 
-    try {
-      timeout = this.schedulerRegistry.getTimeout(timeoutJob);
-    } catch (error) {}
+  //   try {
+  //     timeout = this.schedulerRegistry.getTimeout(timeoutJob);
+  //   } catch (error) {}
 
-    if (timeout) {
-      clearTimeout(timeout);
-      this.schedulerRegistry.deleteTimeout(timeoutJob);
-    }
+  //   if (timeout) {
+  //     clearTimeout(timeout);
+  //     this.schedulerRegistry.deleteTimeout(timeoutJob);
+  //   }
 
-    timeout = setTimeout(callback, milliseconds);
-    this.schedulerRegistry.addTimeout(timeoutJob, timeout);
-  }
+  //   timeout = setTimeout(callback, milliseconds);
+  //   this.schedulerRegistry.addTimeout(timeoutJob, timeout);
+  // }
 
   private deleteJob(assignmentId: number) {
     const cronJobName = this.buildCronJobName(assignmentId);
