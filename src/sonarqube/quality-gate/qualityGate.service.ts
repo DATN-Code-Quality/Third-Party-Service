@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom, map } from 'rxjs';
 import { moodleArrayInput } from 'src/utils';
 import { Issue, IssueSonarqubeDTO } from '../issue/interfaces/Issue';
@@ -149,7 +149,12 @@ export class QualityGateService {
       await this.submissionDBService.findSubmissionsByAssigmentId(assignmentId);
     if (submisisons.isOk()) {
       for (let i = 0; i < submisisons.data.length; i++) {
-        await this.submissionService.scanCodes(submisisons.data[i] as any);
+        Logger.log('Sanner submisison: ' + submisisons.data[i].id);
+        this.submissionService
+          .scanCodes(submisisons.data[i] as any)
+          .then((result) => {
+            Logger.log(result);
+          });
       }
     }
 
