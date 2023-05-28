@@ -1,14 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable } from '@nestjs/common';
-import { firstValueFrom, map } from 'rxjs';
-import { moodleArrayInput } from 'src/utils';
-import { Result } from './interfaces/Result';
+import { Injectable } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
 import { ProjectService } from 'src/project/project.service';
+import { Result } from './interfaces/Result';
 
 @Injectable()
 export class ResultService {
   constructor(
-    // @Inject('MOODLE_MODULE') private readonly token: string,
     private readonly httpService: HttpService,
     private readonly projectService: ProjectService,
   ) {}

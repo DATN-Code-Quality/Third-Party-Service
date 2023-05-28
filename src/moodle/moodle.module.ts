@@ -1,31 +1,22 @@
-import { HttpService } from '@nestjs/axios';
-import { Global, Logger, Module } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
-import { genEndpoint } from 'src/utils';
+import { HttpModule } from '@nestjs/axios';
+import { Global, Module } from '@nestjs/common';
+import { MoodleController } from './moodle.controller';
+import { MoodleService } from './moodle.service';
+import { MoodleDBService } from './moodleDB.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MoodleReqDto } from './req/moodle-req.dto';
+import { MoodleResDto } from './res/moodle-res.dto';
 
 @Module({
-  imports: [],
+  imports: [HttpModule, TypeOrmModule.forFeature([MoodleReqDto, MoodleResDto])],
+  controllers: [MoodleController],
   providers: [
     {
       provide: 'MOODLE_MODULE',
-      useFactory: async (httpService: HttpService): Promise<HttpService> => {
-        const logger = new Logger(MoodleModule.name);
-        const { data } = await firstValueFrom(
-          httpService
-            .get(
-              genEndpoint('/login/token.php', {
-                username: process.env.MOODLE_ACCOUNT_NAME,
-                password: process.env.MOODLE_ACCOUNT_PASSWORD,
-                service: process.env.MOODLE_SERVICE_NAME,
-              }),
-            )
-            .pipe(),
-        );
-
-        return data.token;
-      },
-      inject: [HttpService],
+      useClass: MoodleService,
     },
+    MoodleService,
+    MoodleDBService,
   ],
   exports: ['MOODLE_MODULE'],
 })
