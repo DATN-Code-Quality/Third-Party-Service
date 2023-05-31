@@ -18,7 +18,7 @@ export class MoodleService implements OnModuleInit {
   async onModuleInit() {
     const moodleInfo = await this.moodleDBService.getMoodleInfo();
 
-    if (moodleInfo.isOk()) {
+    if (moodleInfo.isOk() && moodleInfo.data.length > 0) {
       this.token = moodleInfo.data[0].token;
       this.host = moodleInfo.data[0].host;
     }

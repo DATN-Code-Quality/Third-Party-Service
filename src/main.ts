@@ -28,6 +28,8 @@ async function bootstrap() {
     app.useLogger(app.get(Logger));
   }
 
+  app.init();
+
   await app.startAllMicroservices();
 }
 bootstrap();
