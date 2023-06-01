@@ -14,13 +14,20 @@ export class RulesService {
 
   async getRuleDetailByKey(key: string): Promise<RuleDetail> {
     const { data } = await firstValueFrom(
+      // this.httpService
+      //   .get(`${process.env.SONARQUBE_BASE_URL}/rules/show`, {
+      //     auth: {
+      //       username: process.env.SONARQUBE_USERNAME,
+      //       password: process.env.SONARQUBE_PASSWORD,
+      //     },
+      //     params: { key: key },
+      //   })
       this.httpService
-        .get(`${process.env.SONARQUBE_BASE_URL}/rules/show`, {
-          auth: {
-            username: process.env.SONARQUBE_USERNAME,
-            password: process.env.SONARQUBE_PASSWORD,
+        .get(`${process.env.SONARCLOUD_URL}/rules/show`, {
+          params: {
+            key: key,
+            organization: process.env.SONARCLOUD_ORGANIZATION,
           },
-          params: { key: key },
         })
         .pipe(),
     ).catch((e) => {

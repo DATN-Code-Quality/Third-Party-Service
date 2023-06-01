@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ProjectService } from 'src/project/project.service';
 import { Result } from './interfaces/Result';
+import { PROJECT_TYPE } from 'src/project/req/project-req.dto';
 
 @Injectable()
 export class ResultService {
@@ -22,22 +23,42 @@ export class ResultService {
     if (project == null) {
       return null;
     }
+    let url = null;
+    let params = null;
+    let auth = null;
+
+    if (project.type === PROJECT_TYPE.C_CPP) {
+      url = process.env.SONARCLOUD_URL;
+      // params = {
+      //   componentKeys: project.key,
+      //   p: page,
+      //   ps: pageSize,
+      // };
+    } else {
+      url = process.env.SONARQUBE_BASE_URL;
+      // params = {
+      //   componentKeys: project.key,
+      //   p: page,
+      //   ps: pageSize,
+      // };
+      auth = {
+        username: process.env.SONARQUBE_USERNAME,
+        password: process.env.SONARQUBE_PASSWORD,
+      };
+    }
 
     const { data } = await firstValueFrom(
       this.httpService
-        .get(`${process.env.SONARQUBE_BASE_URL}/measures/search_history`, {
-          auth: {
-            username: process.env.SONARQUBE_USERNAME,
-            password: process.env.SONARQUBE_PASSWORD,
-          },
+        .get(`${url}/measures/search_history`, {
+          auth: auth,
           params: {
             component: project.key,
             metrics:
               'bugs,vulnerabilities,sqale_index,duplicated_lines_density,ncloc,coverage,code_smells,reliability_rating,security_rating,sqale_rating',
             // from: ,
             // to: ,
-            p: page,
-            ps: pageSize,
+            // p: page,
+            // ps: pageSize,
           },
           timeout: 60000,
         })
