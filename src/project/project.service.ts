@@ -26,4 +26,19 @@ export class ProjectService {
         return null;
       });
   }
+
+  async findProjectByKey(key: string): Promise<ProjectReqDto> {
+    return await this.projectRepository
+      .createQueryBuilder('project')
+      .where('project.key = :key', {
+        key: key,
+      })
+      .getOne()
+      .then((project) => {
+        return project;
+      })
+      .catch((err) => {
+        return null;
+      });
+  }
 }

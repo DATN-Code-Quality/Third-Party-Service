@@ -5,6 +5,7 @@ import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
 import { SubmissionDBService } from 'src/submission/submissionDB.service';
 import { UsersDBService } from 'src/users/usersDB.service';
 import { SubmissionService } from '../submission/submission.service';
+import { MoodleService } from 'src/moodle/moodle.service';
 
 @Injectable()
 export class SchedulerService {
@@ -17,7 +18,7 @@ export class SchedulerService {
     private submissionService: SubmissionService,
     private submissionDBService: SubmissionDBService,
     private usersDBService: UsersDBService,
-    @Inject('MOODLE_MODULE') private readonly token: string,
+    @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
   ) {}
 
   startJob(id: string, moodleId: number, dueTime: number) {
@@ -134,7 +135,7 @@ export class SchedulerService {
           }
 
           // add token to url
-          ret = { ...ret, link: `${ret.link}?token=${this.token}` };
+          ret = { ...ret, link: `${ret.link}?token=${this.moodle.token}` };
 
           Logger.debug(`savedSubmissions: ${JSON.stringify(ret)}`);
           // step 4: send to scanner

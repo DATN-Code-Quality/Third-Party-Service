@@ -3,11 +3,12 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Assignment } from './interfaces/Assignment';
 import { OperationResult } from 'src/common/operation-result';
+import { MoodleService } from 'src/moodle/moodle.service';
 
 @Injectable()
 export class AssignmentService {
   constructor(
-    @Inject('MOODLE_MODULE') private readonly token: string,
+    @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
     private readonly httpService: HttpService,
   ) {}
 
@@ -19,9 +20,9 @@ export class AssignmentService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+          .get(`${this.moodle.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.token,
+              wstoken: this.moodle.token,
               wsfunction: 'mod_assign_get_assignments',
               moodlewsrestformat: 'json',
               'courseids[0]': courseId,

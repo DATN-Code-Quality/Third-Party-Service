@@ -10,8 +10,6 @@ import {
   Submission,
 } from './interfaces/Submission';
 import { SubmissionService } from './submission.service';
-import { plainToInstance } from 'class-transformer';
-import { ResultResponse } from 'src/sonarqube/result/interfaces/Result';
 
 @Controller('submission')
 export class SubmissionController {

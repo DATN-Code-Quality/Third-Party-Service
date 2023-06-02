@@ -13,6 +13,8 @@ export class ResultController {
     data: ResultRequest,
     meta: Metadata,
   ): Promise<ResultResponse> {
+    console.log(data.submissionId, data.page, data.pageSize);
+
     return await this.resultService
       .getResultsBySubmissionId(data.submissionId, data.page, data.pageSize)
       .then((result) => {

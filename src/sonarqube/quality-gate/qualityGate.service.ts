@@ -1,22 +1,17 @@
 import { HttpService } from '@nestjs/axios';
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { firstValueFrom, map } from 'rxjs';
-import { moodleArrayInput } from 'src/utils';
-import { Issue, IssueSonarqubeDTO } from '../issue/interfaces/Issue';
-import { ProjectService } from 'src/project/project.service';
+import { Injectable, Logger } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+import { SubmissionService } from 'src/submission/submission.service';
+import { SubmissionDBService } from 'src/submission/submissionDB.service';
 import {
   CONDITION,
   Condition,
   converConditionFromArrayToJson,
 } from './interfaces/qualityGate';
-import axios from 'axios';
-import { SubmissionDBService } from 'src/submission/submissionDB.service';
-import { SubmissionService } from 'src/submission/submission.service';
 
 @Injectable()
 export class QualityGateService {
   constructor(
-    // @Inject('MOODLE_MODULE') private readonly token: string,
     private readonly httpService: HttpService,
     private readonly submissionDBService: SubmissionDBService,
     private readonly submissionService: SubmissionService,

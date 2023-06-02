@@ -3,11 +3,12 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Course, CourseModelDTO as CourseMoodelDTO } from './interfaces/Course';
 import { OperationResult } from 'src/common/operation-result';
+import { MoodleService } from 'src/moodle/moodle.service';
 
 @Injectable()
 export class CoursesService {
   constructor(
-    @Inject('MOODLE_MODULE') private readonly token: string,
+    @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
     private readonly httpService: HttpService,
   ) {}
 
@@ -15,9 +16,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+          .get(`${this.moodle.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.token,
+              wstoken: this.moodle.token,
               wsfunction: 'core_course_get_courses',
               moodlewsrestformat: 'json',
             },
@@ -40,9 +41,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+          .get(`${this.moodle.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.token,
+              wstoken: this.moodle.token,
               wsfunction: 'core_enrol_get_users_courses',
               moodlewsrestformat: 'json',
               userid: userMoodleId,
@@ -67,9 +68,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+          .get(`${this.moodle.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.token,
+              wstoken: this.moodle.token,
               wsfunction: 'core_course_get_courses_by_field',
               moodlewsrestformat: 'json',
               field: 'category',
@@ -95,9 +96,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+          .get(`${this.moodle.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.token,
+              wstoken: this.moodle.token,
               wsfunction: 'core_course_get_courses_by_field',
               moodlewsrestformat: 'json',
               field: 'id',
