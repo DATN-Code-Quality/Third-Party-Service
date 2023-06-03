@@ -8,5 +8,6 @@ import { ResultService } from './result.service';
   imports: [HttpModule, ProjectModule],
   controllers: [ResultController],
   providers: [ResultService],
+  exports: [ResultService],
 })
 export class ResultModule {}

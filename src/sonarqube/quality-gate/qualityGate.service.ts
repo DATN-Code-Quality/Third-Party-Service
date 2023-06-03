@@ -8,6 +8,10 @@ import {
   Condition,
   converConditionFromArrayToJson,
 } from './interfaces/qualityGate';
+import { SUBMISSION_STATUS } from 'src/submission/req/submission-req.dto';
+import { ProjectService } from 'src/project/project.service';
+import { PROJECT_TYPE } from 'src/project/req/project-req.dto';
+import { ResultService } from '../result/result.service';
 
 @Injectable()
 export class QualityGateService {
@@ -15,6 +19,8 @@ export class QualityGateService {
     private readonly httpService: HttpService,
     private readonly submissionDBService: SubmissionDBService,
     private readonly submissionService: SubmissionService,
+    private readonly projectService: ProjectService,
+    private readonly resultService: ResultService,
   ) {}
 
   async createQualityGate(
@@ -144,12 +150,12 @@ export class QualityGateService {
       await this.submissionDBService.findSubmissionsByAssigmentId(assignmentId);
     if (submisisons.isOk()) {
       for (let i = 0; i < submisisons.data.length; i++) {
-        Logger.log('Sanner submisison: ' + submisisons.data[i].id);
-        this.submissionService
-          .scanCodes(submisisons.data[i] as any)
-          .then((result) => {
-            Logger.log(result);
-          });
+        if (
+          submisisons.data[i].status === SUBMISSION_STATUS.FAIL ||
+          submisisons.data[i].status === SUBMISSION_STATUS.PASS
+        ) {
+          this.updateSubmisisonStatus(submisisons.data[i].id, conditionJson);
+        }
       }
     }
 
@@ -185,6 +191,37 @@ export class QualityGateService {
         ).catch((e) => {
           throw e;
         });
+      }
+    }
+  }
+
+  async updateSubmisisonStatus(submisisonId: string, conditionsJson: object) {
+    const result = await this.resultService.getResultsBySubmissionId(
+      submisisonId,
+      null,
+      null,
+    );
+    const length = result.paging.total;
+
+    for (let i = 0; i < result['measures'].length; i++) {
+      const metric = result.measures[i].metric;
+      const value = result.measures[i].history[length - 1].value;
+
+      if (conditionsJson[metric]) {
+        if (
+          (metric === 'coverage' && value < conditionsJson[metric]) ||
+          (metric !== 'coverage' && value > conditionsJson[metric])
+        ) {
+          this.submissionDBService.updateSubmissionStatus(
+            submisisonId,
+            SUBMISSION_STATUS.FAIL,
+          );
+        } else {
+          this.submissionDBService.updateSubmissionStatus(
+            submisisonId,
+            SUBMISSION_STATUS.PASS,
+          );
+        }
       }
     }
   }
