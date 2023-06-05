@@ -54,7 +54,7 @@ export class ResultService {
           params: {
             component: project.key,
             metrics:
-              'bugs,vulnerabilities,sqale_index,duplicated_lines_density,ncloc,coverage,code_smells,reliability_rating,security_rating,sqale_rating',
+              'bugs,vulnerabilities,code_smells,sqale_index,duplicated_lines_density,ncloc,coverage,reliability_rating,security_rating,sqale_rating,violations,blocker_violations,critical_violations,major_violations,minor_violations,info_violations',
             // from: ,
             // to: ,
             // p: page,
