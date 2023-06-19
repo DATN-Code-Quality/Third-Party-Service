@@ -9,8 +9,13 @@ export class CourseReqDto extends BaseEntity {
   @Column('varchar', { name: 'name', length: 255 })
   name: string;
 
-  @IsString()
-  @Column('varchar', { name: 'moodleId', length: 255 })
+  // @IsString()
+  @Column('varchar', {
+    name: 'moodleId',
+    length: 255,
+    nullable: true,
+    unique: true,
+  })
   moodleId: string;
 
   @Column('varchar', {
@@ -37,8 +42,8 @@ export class CourseReqDto extends BaseEntity {
   @Column('varchar', { name: 'summary', nullable: true, length: 255 })
   summary: string | null;
 
-  @IsString()
-  @Column('varchar', { name: 'categoryId', length: 255 })
+  // @IsString()
+  @Column('varchar', { name: 'categoryId', length: 255, nullable: true })
   categoryId: string;
 
   @OneToMany(() => UserCourseReqDto, (userCourse) => userCourse.user)
