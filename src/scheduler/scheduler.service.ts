@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { SubmissionResDto } from 'src/submission/res/submission-res.dto';
@@ -6,6 +6,12 @@ import { SubmissionDBService } from 'src/submission/submissionDB.service';
 import { UsersDBService } from 'src/users/usersDB.service';
 import { SubmissionService } from '../submission/submission.service';
 import { MoodleService } from 'src/moodle/moodle.service';
+import { User } from 'src/users/interfaces/User';
+import nodemailer from 'nodemailer';
+import { templateSendResultHtml } from 'src/config/templateSendResultHtml';
+import { AssignmentDBService } from 'src/assignment/assignmentDB.service';
+import { AssignmentResDto } from 'src/assignment/res/assignment-res.dto';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class SchedulerService {
@@ -18,6 +24,9 @@ export class SchedulerService {
     private submissionService: SubmissionService,
     private submissionDBService: SubmissionDBService,
     private usersDBService: UsersDBService,
+    @Inject(forwardRef(() => AssignmentDBService))
+    private assignmentDBService: AssignmentDBService,
+    private readonly httpService: HttpService,
     @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
   ) {}
 
@@ -33,6 +42,31 @@ export class SchedulerService {
   updateJob(id: string, moodleId: number, dueTime: number) {
     this.stopJob(moodleId);
     this.startJob(id, moodleId, dueTime);
+  }
+
+  async sendEmail(user: User, templateHtml: string, subject: string) {
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.USER_ACCOUNT,
+        pass: process.env.USER_PASSWORD,
+      },
+      from: process.env.USER_ACCOUNT,
+    });
+    const mainOptions = {
+      from: `<codequality2023@gmail.com>`,
+      to: user.email,
+      subject: subject,
+      text: 'Hello. This email is for scanning your submission.',
+      html: templateHtml,
+    };
+    transporter.sendMail(mainOptions, function (err, info) {
+      if (err) {
+        Logger.log('Send Email Error: ' + JSON.stringify(err));
+      } else {
+        Logger.log('Message sent: ' + JSON.stringify(info.response));
+      }
+    });
   }
 
   private addCronJob(
@@ -145,6 +179,39 @@ export class SchedulerService {
         });
 
         // step 5: send result
+        submissions.map(async (submission) => {
+          const findUser = await this.usersDBService.findUserByMoodleId(
+            submission.userId,
+          );
+          const findAssignment = await this.assignmentDBService.findOne(
+            AssignmentResDto,
+            submission.assignmentId,
+          );
+          if (findUser.isOk() && findAssignment.isOk()) {
+            await this.sendEmail(
+              findUser.data,
+              templateSendResultHtml(
+                findUser,
+                findAssignment.data.name,
+                submission.status,
+              ),
+              'Your submission result',
+            );
+            this.httpService
+              .post(`${this.moodle.host}/webservice/rest/server.php`, {
+                params: {
+                  wstoken: this.moodle.token,
+                  wsfunction: 'core_user_get_users',
+                  moodlewsrestformat: 'json',
+                  'messages[0][touserid]': findUser.data.moodleId,
+                  'messages[0][text]': `Your submission of assigment ${findAssignment.data.name} has been completed`,
+                  'messages[0][textformat]': 0,
+                },
+              })
+              .pipe();
+          }
+          return;
+        });
       },
     );
 
