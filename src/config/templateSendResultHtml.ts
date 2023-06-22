@@ -6,42 +6,42 @@ export const templateSendResultHtml = (
 ) => {
   let result = '';
   if (submissionStatus < 3) {
-    result = 'Your submission cannot scanned. Please check your submission';
+    result =
+      '<h3> Your result: CANNOT SCAN </h3> <br>Please check your submission <br>';
   } else {
     if (submissionStatus === 3) {
-      result = '<strong> Your submission is pass.</strong> ';
+      result = '<h3> Your result: PASS </h3> ';
     } else {
-      result = '<strong> Your submission is failed.</strong> ';
+      result = '<h3> Your result: FAIL </h3> ';
     }
     result =
-      result +
-      `<br><strong> Total : </strong>  ${overViewResult['violations']} issue <br>`;
-    result = result + `<br><strong> \t * Type: </strong><br>`;
+      result + `<h3> Total :  ${overViewResult['violations']} issue </h3> `;
+    result = result + `<h4> &emsp; * Type: </h4>`;
     result =
       result +
-      `<br> &emsp; - <strong> Bug : </strong>  ${overViewResult['bugs']} <br>`;
+      `&emsp;&emsp; - <strong> Bug : </strong>  ${overViewResult['bugs']} <br>`;
     result =
       result +
-      `<br> &emsp; - <strong> Vulnerabilitie : </strong>  ${overViewResult['vulnerabilities']} <br>`;
+      `<br> &emsp;&emsp; - <strong> Vulnerabilitie : </strong>  ${overViewResult['vulnerabilities']} <br>`;
     result =
       result +
-      `<br> &emsp; - <strong> Code Smell : </strong>  ${overViewResult['code_smells']} <br>`;
-    result = result + `<br><strong> \t * Severity: </strong><br>`;
+      `<br> &emsp;&emsp; - <strong> Code Smell : </strong>  ${overViewResult['code_smells']} <br>`;
+    result = result + `<h4> &emsp; * Severity: </h4>`;
     result =
       result +
-      `<br> &emsp; - <strong> Blocker : </strong>  ${overViewResult['blocker_violations']} <br>`;
+      `&emsp;&emsp; - <strong> Blocker : </strong>  ${overViewResult['blocker_violations']} <br>`;
     result =
       result +
-      `<br> &emsp; - <strong> Critical : </strong>  ${overViewResult['critical_violations']} <br>`;
+      `<br> &emsp;&emsp; - <strong> Critical : </strong>  ${overViewResult['critical_violations']} <br>`;
     result =
       result +
-      `<br> &emsp; - <strong> Major : </strong>  ${overViewResult['major_violations']} <br>`;
+      `<br> &emsp;&emsp; - <strong> Major : </strong>  ${overViewResult['major_violations']} <br>`;
     result =
       result +
-      `<br> &emsp; - <strong> Minor : </strong>  ${overViewResult['minor_violations']} <br>`;
+      `<br> &emsp;&emsp; - <strong> Minor : </strong>  ${overViewResult['minor_violations']} <br>`;
     result =
       result +
-      `<br> &emsp; - <strong> Info : </strong>  ${overViewResult['info_violations']} <br>`;
+      `<br> &emsp;&emsp; - <strong> Info : </strong>  ${overViewResult['info_violations']} <br>`;
   }
   return `
   <!DOCTYPE HTML
@@ -314,7 +314,7 @@ export const templateSendResultHtml = (
                                                                           completed</span></span></p>
                                                                           <p style="line-height: 180%;"><span
                                                                           style="font-family: Lato, sans-serif;"><span
-                                                                              style="font-size: 16px; line-height: 28.8px;"><h3>Your result:</h3> ${result}</span></span></p>
+                                                                              style="font-size: 16px; line-height: 28.8px; color:#FFFFFF !important;">${result}</span></span></p>
                                                               <p style="line-height: 180%;"><span
                                                                       style="font-family: Lato, sans-serif;"><span
                                                                           style="font-size: 16px; line-height: 28.8px;">Please
