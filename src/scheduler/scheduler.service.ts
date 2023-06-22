@@ -207,10 +207,10 @@ export class SchedulerService {
                 'Your submission result',
               );
               this.httpService
-                .post(`${this.moodle.host}/webservice/rest/server.php`, {
+                .get(`${this.moodle.host}/webservice/rest/server.php`, {
                   params: {
                     wstoken: this.moodle.token,
-                    wsfunction: 'core_user_get_users',
+                    wsfunction: 'core_message_send_instant_messages',
                     moodlewsrestformat: 'json',
                     'messages[0][touserid]': findUser.data.moodleId,
                     'messages[0][text]': `Your submission of assigment ${findAssignment.data.name} has been completed`,
