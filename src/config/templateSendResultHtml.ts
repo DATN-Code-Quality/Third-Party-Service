@@ -310,7 +310,7 @@ export const templateSendResultHtml = (
                                                                       style="font-family: Lato, sans-serif;"><span
                                                                           style="font-size: 16px; line-height: 28.8px;">Your
                                                                           submission of assigment
-                                                                          ${assignmentName} has been
+                                                                          <strong>${assignmentName}</strong> has been
                                                                           completed</span></span></p>
                                                                           <p style="line-height: 180%;"><span
                                                                           style="font-family: Lato, sans-serif;"><span

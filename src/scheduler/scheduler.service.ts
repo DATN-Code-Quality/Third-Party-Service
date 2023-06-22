@@ -14,6 +14,8 @@ import { AssignmentResDto } from 'src/assignment/res/assignment-res.dto';
 import { HttpService } from '@nestjs/axios';
 import { ResultModule } from 'src/sonarqube/result/result.module';
 import { ResultService } from 'src/sonarqube/result/result.service';
+import { OperationResult } from 'src/common/operation-result';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class SchedulerService {
@@ -206,18 +208,25 @@ export class SchedulerService {
                 ),
                 'Your submission result',
               );
-              this.httpService
-                .get(`${this.moodle.host}/webservice/rest/server.php`, {
-                  params: {
-                    wstoken: this.moodle.token,
-                    wsfunction: 'core_message_send_instant_messages',
-                    moodlewsrestformat: 'json',
-                    'messages[0][touserid]': findUser.data.moodleId,
-                    'messages[0][text]': `Your submission of assigment ${findAssignment.data.name} has been completed`,
-                    'messages[0][textformat]': 0,
-                  },
-                })
-                .pipe();
+              try {
+                const { data } = await firstValueFrom(
+                  this.httpService
+                    .get(`${this.moodle.host}/webservice/rest/server.php`, {
+                      params: {
+                        wstoken: this.moodle.token,
+                        wsfunction: 'core_message_send_instant_messages',
+                        moodlewsrestformat: 'json',
+                        'messages[0][touserid]': findUser.data.moodleId,
+                        'messages[0][text]': `Your submission of assigment ${findAssignment.data.name} has been completed`,
+                        'messages[0][textformat]': 0,
+                      },
+                    })
+                    .pipe(),
+                );
+              } catch (error) {
+                Logger.error(error, 'Send Message Error');
+                return OperationResult.error(error, []);
+              }
             }
           });
 
