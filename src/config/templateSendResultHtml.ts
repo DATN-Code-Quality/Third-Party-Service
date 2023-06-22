@@ -2,14 +2,46 @@ export const templateSendResultHtml = (
   user,
   assignmentName,
   submissionStatus,
+  overViewResult,
 ) => {
   let result = '';
-  if (submissionStatus === 2) {
-    result = 'Your submission cannot scan. Please check your submission';
-  } else if (submissionStatus === 3) {
-    result = `<br> -Bug: <br>...`;
-  } else if (submissionStatus === 4) {
-    result = 'Your submission is failed.';
+  if (submissionStatus < 3) {
+    result = 'Your submission cannot scanned. Please check your submission';
+  } else {
+    if (submissionStatus === 3) {
+      result = '<strong> Your submission is pass.</strong> ';
+    } else {
+      result = '<strong> Your submission is failed.</strong> ';
+    }
+    result =
+      result +
+      `<br><strong> Total : </strong>  ${overViewResult['violations']} issue <br>`;
+    result = result + `<br><strong> \t * Type: </strong><br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Bug : </strong>  ${overViewResult['bugs']} <br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Vulnerabilitie : </strong>  ${overViewResult['vulnerabilities']} <br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Code Smell : </strong>  ${overViewResult['code_smells']} <br>`;
+    result = result + `<br><strong> \t * Severity: </strong><br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Blocker : </strong>  ${overViewResult['blocker_violations']} <br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Critical : </strong>  ${overViewResult['critical_violations']} <br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Major : </strong>  ${overViewResult['major_violations']} <br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Minor : </strong>  ${overViewResult['minor_violations']} <br>`;
+    result =
+      result +
+      `<br> &emsp; - <strong> Info : </strong>  ${overViewResult['info_violations']} <br>`;
   }
   return `
   <!DOCTYPE HTML

@@ -4,12 +4,14 @@ import { SubmissionModule } from 'src/submission/submission.module';
 import { SchedulerService } from './scheduler.service';
 import { UsersModule } from 'src/users/users.module';
 import { AssignmentModule } from 'src/assignment/assignment.module';
+import { ResultModule } from 'src/sonarqube/result/result.module';
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    SubmissionModule,
+    forwardRef(() => SubmissionModule),
     UsersModule,
+    ResultModule,
     forwardRef(() => AssignmentModule),
   ],
   controllers: [],
