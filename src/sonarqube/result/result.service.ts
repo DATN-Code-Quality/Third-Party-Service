@@ -73,7 +73,6 @@ export class ResultService {
       const resultTotal = data.paging.total;
 
       if (resultPageIndex * resultPageSize < resultTotal) {
-        console.log((resultTotal % resultPageSize) + 1);
         const result = await firstValueFrom(
           this.httpService
             .get(`${url}/measures/search_history`, {
