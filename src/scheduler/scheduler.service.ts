@@ -174,7 +174,11 @@ export class SchedulerService {
           }
 
           // add token to url
-          ret = { ...ret, link: `${ret.link}?token=${this.moodle.token}` };
+          ret = {
+            ...ret,
+            link: `${ret.link}?token=${this.moodle.token}`,
+            timemodified: timemodified,
+          };
 
           Logger.debug(`savedSubmissions: ${JSON.stringify(ret)}`);
           // step 4: send to scanner
@@ -186,15 +190,13 @@ export class SchedulerService {
             //   );
             const findAssignment = await this.assignmentDBService.findOne(
               AssignmentResDto,
-              submission.assignmentId,
+              ret.assignmentId,
             );
             const resultOverview =
-              await this.resultService.getOverviewResultsBySubmissionId(
-                submission.id,
-              );
+              await this.resultService.getOverviewResultsBySubmissionId(ret.id);
             const submissionAfterScan = await this.submissionDBService.findOne(
               SubmissionResDto,
-              submission.id,
+              ret.id,
             );
 
             if (findUser.isOk() && findAssignment.isOk()) {
