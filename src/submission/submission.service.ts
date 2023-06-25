@@ -60,8 +60,8 @@ export class SubmissionService {
       note: moodleSubmission.status,
       submitType: moodleSubmission.plugins[0].type,
       timemodified: new Date(
-        parseInt(moodleSubmission.timemodified, 10) * 1000,
-      ),
+        moodleSubmission.timemodified * 1000,
+      ).toISOString(),
       userId: moodleSubmission.userid,
       origin: '',
       status: SUBMISSION_STATUS.SUBMITTED,
