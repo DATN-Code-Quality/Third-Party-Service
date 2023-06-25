@@ -10,12 +10,27 @@ import {
   Submission,
 } from './interfaces/Submission';
 import { SubmissionService } from './submission.service';
-import { plainToInstance } from 'class-transformer';
-import { ResultResponse } from 'src/sonarqube/result/interfaces/Result';
+import { SchedulerService } from 'src/scheduler/scheduler.service';
+import { UsersService } from 'src/users/users.service';
+import { ResultService } from 'src/sonarqube/result/result.service';
+import { UsersDBService } from 'src/users/usersDB.service';
+import { SubmissionDBService } from './submissionDB.service';
+import { SubmissionResDto } from './res/submission-res.dto';
+import { AssignmentDBService } from 'src/assignment/assignmentDB.service';
+import { AssignmentResDto } from 'src/assignment/res/assignment-res.dto';
+import { templateSendResultHtml } from 'src/config/templateSendResultHtml';
+import { UserResDto } from 'src/users/res/user-res.dto';
 
 @Controller('submission')
 export class SubmissionController {
-  constructor(private readonly service: SubmissionService) {}
+  constructor(
+    private readonly service: SubmissionService,
+    private readonly submissionDBService: SubmissionDBService,
+    private readonly scheduleService: SchedulerService,
+    private readonly usersDBService: UsersDBService,
+    private readonly resultService: ResultService,
+    private readonly assignmentDBService: AssignmentDBService,
+  ) {}
 
   @GrpcMethod('GSubmissionService', 'GetSubmissionsByAssignmentId')
   @UsePipes(new ValidationPipe())
@@ -35,7 +50,29 @@ export class SubmissionController {
     data.createdAt = new Date(data.timemodified.toString().replace('T', ' '));
     data.updatedAt = new Date(data.timemodified.toString().replace('T', ' '));
 
-    this.service.scanCodes(data as any);
+    this.service.scanCodes(data as any).then(async (result) => {
+      const user = await this.usersDBService.findOne(UserResDto, data.userId);
+      const assignment = await this.assignmentDBService.findOne(
+        AssignmentResDto,
+        data.assignmentId,
+      );
+      const resultOverview =
+        await this.resultService.getOverviewResultsBySubmissionId(data.id);
+      const submissionAfterScan = await this.submissionDBService.findOne(
+        SubmissionResDto,
+        data.id,
+      );
+      await this.scheduleService.sendEmail(
+        user.data,
+        templateSendResultHtml(
+          user.data,
+          assignment.data.name,
+          submissionAfterScan.data.status,
+          resultOverview,
+        ),
+        'Your submission result',
+      );
+    });
     return null;
   }
 }

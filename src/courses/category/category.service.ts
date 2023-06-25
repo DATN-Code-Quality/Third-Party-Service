@@ -2,20 +2,21 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { Category } from './interfaces/Category';
+import { MoodleService } from 'src/moodle/moodle.service';
 
 @Injectable()
 export class CategoryService {
   constructor(
-    @Inject('MOODLE_MODULE') private readonly token: string,
+    @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
     private readonly httpService: HttpService,
   ) {}
 
   async getAllCategory(): Promise<Category[]> {
     const { data } = await firstValueFrom(
       this.httpService
-        .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+        .get(`${this.moodle.host}/webservice/rest/server.php`, {
           params: {
-            wstoken: this.token,
+            wstoken: this.moodle.token,
             wsfunction: 'core_course_get_categories',
             moodlewsrestformat: 'json',
             'criteria[0][key]': 'parent',

@@ -7,5 +7,6 @@ import { CourseInfoSchedulerModule } from 'src/scheduler/courseInfoScheduler.mod
   imports: [CourseInfoSchedulerModule],
   controllers: [CoursesController],
   providers: [CoursesService],
+  exports: [CoursesService]
 })
 export class CoursesModule {}

@@ -4,6 +4,9 @@ import { CronJob } from 'cron';
 import { AssignmentService } from 'src/assignment/assignment.service';
 import { AssignmentDBService } from 'src/assignment/assignmentDB.service';
 import { AssignmentReqDto } from 'src/assignment/req/assignment-req.dto';
+import { SchedulerService } from './scheduler.service';
+import { AssignmentResDto } from 'src/assignment/res/assignment-res.dto';
+import { OperationResult } from 'src/common/operation-result';
 
 @Injectable()
 export class CourseInfoSchedulerService {
@@ -14,6 +17,7 @@ export class CourseInfoSchedulerService {
     private schedulerRegistry: SchedulerRegistry,
     private assigmentService: AssignmentService,
     private assignmentDBService: AssignmentDBService,
+    private submissionScheduler: SchedulerService,
     @Inject('MOODLE_MODULE') private readonly token: string,
   ) {}
 
@@ -45,15 +49,15 @@ export class CourseInfoSchedulerService {
       if (job) {
         this.schedulerRegistry.deleteCronJob(name);
       }
-    } catch (error) {
-      Logger.error('Error: ' + error);
-    }
+    } catch (error) {}
+
+    Logger.log(`addCronJob: ${name}`, 'CourseInfoSchedulerService');
 
     // job will run every 'minutes' minutes at a random second (to avoid DDOS on moodle server)
     job = new CronJob(
       `${Math.floor(Math.random() * 60)} */${minutes} * * * *`,
       async () => {
-        Logger.debug(`${name} is running...`);
+        Logger.log(`${name} is running...`, 'CourseInfoSchedulerService');
 
         const current = Date.now();
 
@@ -62,22 +66,22 @@ export class CourseInfoSchedulerService {
           return;
         }
 
-        // step 1: get all submissions
+        // step 1: get all assignment
         let result = await this.assigmentService.getAllAssignmentsByCourseId(
           moodleId,
         );
 
         if (!result.isOk()) {
           Logger.error(
-            "Can't get submissions from moodle",
-            'SchedulerService.addCronJob',
+            "Can't get assignments from moodle",
+            'CourseInfoSchedulerService.addCronJob',
           );
           return;
         }
 
         let assignments = result.data;
 
-        Logger.debug(`assignments: ${JSON.stringify(assignments)}`);
+        Logger.log(`assignments: ${JSON.stringify(assignments)}`);
 
         assignments = assignments.map((assignment) => ({
           ...assignment,
@@ -88,7 +92,9 @@ export class CourseInfoSchedulerService {
           assignmentMoodleId: assignment.assignmentMoodleId,
           attachmentFileLink: assignment.attachmentFileLink,
           courseId: assignment.courseId,
-          dueDate: assignment.dueDate,
+          dueDate: new Date(
+            parseInt(assignment.dueDate as any as string, 10) * 1000, // ép kiểu ở đây là do assignment service gán trực tiếp số từ moodle mà k đổi sang Date
+          ),
           name: assignment.name,
           description: assignment.description,
           status: assignment.status,
@@ -96,9 +102,21 @@ export class CourseInfoSchedulerService {
         }));
 
         // step 5: send result
-        this.assignmentDBService.upsertAssignments(
+        const savedresult = await this.assignmentDBService.upsertAssignments(
           assignmentsReqDTO as any as AssignmentReqDto[],
         );
+
+        if (savedresult.isOk()) {
+          const { data } = savedresult as OperationResult<AssignmentResDto[]>;
+
+          data.forEach((assignment: AssignmentResDto) => {
+            this.submissionScheduler.startJob(
+              assignment.id,
+              Number(assignment.assignmentMoodleId),
+              assignment.dueDate.getTime(),
+            );
+          });
+        }
       },
     );
 

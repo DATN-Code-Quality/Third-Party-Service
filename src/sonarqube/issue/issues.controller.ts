@@ -21,6 +21,7 @@ export class IssuesController {
         data.severity,
         data.rule,
         data.file,
+        data.fileuuid,
         data.page,
         data.pageSize,
       )

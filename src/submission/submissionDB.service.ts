@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { plainToInstance } from 'class-transformer';
 import { BaseService } from 'src/common/base.service';
 import { Repository } from 'typeorm';
-import { SubmissionReqDto } from './req/submission-req.dto';
+import {
+  SUBMISSION_ORIGIN,
+  SUBMISSION_STATUS,
+  SubmissionReqDto,
+} from './req/submission-req.dto';
 import { SubmissionResDto } from './res/submission-res.dto';
 import { OperationResult } from 'src/common/operation-result';
 
@@ -129,5 +133,19 @@ export class SubmissionDBService extends BaseService<
         result = OperationResult.error(err);
       });
     return result;
+  }
+
+  async updateSubmissionStatus(
+    submisisonId: string,
+    status: SUBMISSION_STATUS,
+  ): Promise<OperationResult<any>> {
+    return await this.submissionRepository
+      .update(submisisonId, { status: status })
+      .then(() => {
+        return OperationResult.ok('update status successfully');
+      })
+      .catch((err) => {
+        return OperationResult.error(new Error(err.message));
+      });
   }
 }

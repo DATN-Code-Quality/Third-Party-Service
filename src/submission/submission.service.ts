@@ -6,11 +6,13 @@ import { firstValueFrom } from 'rxjs';
 import { TaskQueue, Workflows } from 'src/temporal/workflows';
 import { Submission } from './interfaces/Submission';
 import { OperationResult } from 'src/common/operation-result';
+import { SUBMISSION_STATUS } from './req/submission-req.dto';
+import { MoodleService } from 'src/moodle/moodle.service';
 
 @Injectable()
 export class SubmissionService {
   constructor(
-    @Inject('MOODLE_MODULE') private readonly token: string,
+    @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
     @InjectTemporalClient() private readonly client: WorkflowClient,
     private readonly httpService: HttpService,
   ) {}
@@ -23,9 +25,9 @@ export class SubmissionService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${process.env.MOODLE_BASE_URL}/webservice/rest/server.php`, {
+          .get(`${this.moodle.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.token,
+              wstoken: this.moodle.token,
               wsfunction: 'mod_assign_get_submissions',
               moodlewsrestformat: 'json',
               'assignmentids[0]': assignmentMoodleId,
@@ -57,10 +59,10 @@ export class SubmissionService {
         ]?.fileurl || '',
       note: moodleSubmission.status,
       submitType: moodleSubmission.plugins[0].type,
-      timemodified: new Date(moodleSubmission.timemodified).toString(),
+      timemodified: new Date(moodleSubmission.timemodified * 1000).toString(),
       userId: moodleSubmission.userid,
       origin: '',
-      status: moodleSubmission.status,
+      status: SUBMISSION_STATUS.SUBMITTED,
       grade: null,
       submissionMoodleId: moodleSubmission.id,
     };
