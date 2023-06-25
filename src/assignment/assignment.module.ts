@@ -6,6 +6,7 @@ import { AssignmentDBService } from './assignmentDB.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AssignmentReqDto } from './req/assignment-req.dto';
 import { AssignmentResDto } from './res/assignment-res.dto';
+import { AssignmentInitationService } from './assignmentInit.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { AssignmentResDto } from './res/assignment-res.dto';
     TypeOrmModule.forFeature([AssignmentReqDto, AssignmentResDto]),
   ],
   controllers: [AssignmentController],
-  providers: [AssignmentService, AssignmentDBService],
+  providers: [AssignmentService, AssignmentDBService, AssignmentInitationService],
   exports: [AssignmentService, AssignmentDBService],
 })
 export class AssignmentModule {}

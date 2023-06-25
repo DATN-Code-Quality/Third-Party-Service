@@ -14,7 +14,7 @@ export class AssignmentDBService extends BaseService<
 > {
   constructor(
     @InjectRepository(AssignmentReqDto)
-    private readonly assignmentRepository: Repository<AssignmentReqDto>, 
+    private readonly assignmentRepository: Repository<AssignmentReqDto>,
   ) {
     super(assignmentRepository);
   }
@@ -37,6 +37,25 @@ export class AssignmentDBService extends BaseService<
             excludeExtraneousValues: true,
           }),
         );
+      })
+      .catch((err) => {
+        result = OperationResult.error(err);
+      });
+    return result;
+  }
+
+  async findAssignmentById(
+    assigmentId: string,
+  ): Promise<OperationResult<AssignmentResDto>> {
+    let result: OperationResult<AssignmentResDto>;
+    await this.assignmentRepository
+      .createQueryBuilder('user')
+      .where('assignment.id = :assigmentId', {
+        id: assigmentId,
+      })
+      .getOne()
+      .then((savedDtos) => {
+        result = OperationResult.ok(savedDtos);
       })
       .catch((err) => {
         result = OperationResult.error(err);
