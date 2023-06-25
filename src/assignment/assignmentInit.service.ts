@@ -18,7 +18,8 @@ export class AssignmentInitationService implements OnModuleInit {
     if (assignments !== null && assignments.length > 0) {
       assignments.forEach((assignment) => {
         if (
-          Number(assignment.assignmentMoodleId) > 0 ||
+          assignment.assignmentMoodleId !== null &&
+          Number(assignment.assignmentMoodleId) > 0 &&
           new Date(assignment.dueDate).getTime() - Date.now() > 0
         ) {
           this.schedulerService.startJob(
