@@ -95,7 +95,7 @@ export class UsersService {
             userId: user.username,
             moodleId: user.id,
             password: '',
-            status: USER_STATUS.ACTIVE,
+            // status: USER_STATUS.ACTIVE,
           };
         });
         return OperationResult.ok(ret);
