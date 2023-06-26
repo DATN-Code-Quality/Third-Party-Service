@@ -176,7 +176,7 @@ export class SchedulerService {
           // add token to url
           ret = {
             ...ret,
-            link: `${ret.link}?token=${this.moodle.token}`,
+            link: `${ret.link}?token=${MoodleService.token}`,
             timemodified: timemodified,
           };
 
@@ -213,9 +213,9 @@ export class SchedulerService {
               try {
                 const { data } = await firstValueFrom(
                   this.httpService
-                    .get(`${this.moodle.host}/webservice/rest/server.php`, {
+                    .get(`${MoodleService.host}/webservice/rest/server.php`, {
                       params: {
-                        wstoken: this.moodle.token,
+                        wstoken: MoodleService.token,
                         wsfunction: 'core_message_send_instant_messages',
                         moodlewsrestformat: 'json',
                         'messages[0][touserid]': findUser.data.moodleId,

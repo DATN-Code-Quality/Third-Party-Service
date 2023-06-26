@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Scope } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { OperationResult } from 'src/common/operation-result';
 import { ConnectMoodleRequest } from './interfaces/moodle';
@@ -8,8 +8,9 @@ import { MoodleReqDto } from './req/moodle-req.dto';
 
 @Injectable()
 export class MoodleService implements OnModuleInit {
-  public token: string;
-  public host: string;
+  public static token: string;
+  public static host: string;
+
   constructor(
     private readonly httpService: HttpService,
     private readonly moodleDBService: MoodleDBService,
@@ -19,8 +20,8 @@ export class MoodleService implements OnModuleInit {
     const moodleInfo = await this.moodleDBService.getMoodleInfo();
 
     if (moodleInfo.isOk() && moodleInfo.data.length > 0) {
-      this.token = moodleInfo.data[0].token;
-      this.host = moodleInfo.data[0].host;
+      MoodleService.token = moodleInfo.data[0].token;
+      MoodleService.host = moodleInfo.data[0].host;
     }
   }
 
@@ -50,11 +51,11 @@ export class MoodleService implements OnModuleInit {
         return OperationResult.fail(data.error);
       }
 
-      this.token = data.token;
-      this.host = host;
+      MoodleService.token = data.token;
+      MoodleService.host = host;
 
       this.moodleDBService.create(MoodleReqDto, {
-        token: this.token,
+        token: data.token,
         host,
       } as any);
 
@@ -66,7 +67,7 @@ export class MoodleService implements OnModuleInit {
   }
 
   async status(): Promise<OperationResult<boolean>> {
-    if (this.token && this.host) {
+    if (MoodleService.token && MoodleService.host) {
       return OperationResult.ok(true);
     }
 
