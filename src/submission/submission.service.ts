@@ -25,9 +25,9 @@ export class SubmissionService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'mod_assign_get_submissions',
               moodlewsrestformat: 'json',
               'assignmentids[0]': assignmentMoodleId,
@@ -59,9 +59,7 @@ export class SubmissionService {
         ]?.fileurl || '',
       note: moodleSubmission.status,
       submitType: moodleSubmission.plugins[0].type,
-      timemodified: new Date(
-        moodleSubmission.timemodified * 1000,
-      ).toISOString(),
+      timemodified: new Date(moodleSubmission.timemodified * 1000),
       userId: moodleSubmission.userid,
       origin: '',
       status: SUBMISSION_STATUS.SUBMITTED,

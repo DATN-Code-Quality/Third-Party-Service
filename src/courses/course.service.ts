@@ -16,9 +16,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_course_get_courses',
               moodlewsrestformat: 'json',
             },
@@ -41,9 +41,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_enrol_get_users_courses',
               moodlewsrestformat: 'json',
               userid: userMoodleId,
@@ -68,9 +68,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_course_get_courses_by_field',
               moodlewsrestformat: 'json',
               field: 'category',
@@ -96,9 +96,9 @@ export class CoursesService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_course_get_courses_by_field',
               moodlewsrestformat: 'json',
               field: 'id',

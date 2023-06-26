@@ -14,9 +14,9 @@ export class CategoryService {
   async getAllCategory(): Promise<Category[]> {
     const { data } = await firstValueFrom(
       this.httpService
-        .get(`${this.moodle.host}/webservice/rest/server.php`, {
+        .get(`${MoodleService.host}/webservice/rest/server.php`, {
           params: {
-            wstoken: this.moodle.token,
+            wstoken: MoodleService.token,
             wsfunction: 'core_course_get_categories',
             moodlewsrestformat: 'json',
             'criteria[0][key]': 'parent',
