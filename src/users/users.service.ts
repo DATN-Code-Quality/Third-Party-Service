@@ -20,9 +20,9 @@ export class UsersService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_user_get_users_by_field',
               moodlewsrestformat: 'json',
               field: field,
@@ -45,9 +45,9 @@ export class UsersService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_user_get_users',
               moodlewsrestformat: 'json',
               'criteria[0][key]': 'lastname',
@@ -72,9 +72,9 @@ export class UsersService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'core_enrol_get_enrolled_users',
               moodlewsrestformat: 'json',
               courseid: courseid,
@@ -95,7 +95,7 @@ export class UsersService {
             userId: user.username,
             moodleId: user.id,
             password: '',
-            status: USER_STATUS.ACTIVE,
+            // status: USER_STATUS.ACTIVE,
           };
         });
         return OperationResult.ok(ret);

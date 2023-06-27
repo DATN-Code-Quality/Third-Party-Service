@@ -8,7 +8,6 @@ import { MoodleService } from 'src/moodle/moodle.service';
 @Injectable()
 export class AssignmentService {
   constructor(
-    @Inject('MOODLE_MODULE') private readonly moodle: MoodleService,
     private readonly httpService: HttpService,
   ) {}
 
@@ -20,9 +19,9 @@ export class AssignmentService {
     try {
       const { data } = await firstValueFrom(
         this.httpService
-          .get(`${this.moodle.host}/webservice/rest/server.php`, {
+          .get(`${MoodleService.host}/webservice/rest/server.php`, {
             params: {
-              wstoken: this.moodle.token,
+              wstoken: MoodleService.token,
               wsfunction: 'mod_assign_get_assignments',
               moodlewsrestformat: 'json',
               'courseids[0]': courseId,
