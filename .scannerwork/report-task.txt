@@ -1,0 +1,7 @@
+organization=test-123456
+projectKey=Project_for_c
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.43074
+dashboardUrl=https://sonarcloud.io/dashboard?id=Project_for_c
+ceTaskId=AYj9GojWf57JiQhKjrv9
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AYj9GojWf57JiQhKjrv9

@@ -91,4 +91,92 @@ export class IssuesService {
 
     return null;
   }
+
+  async getAllIssuesBySubmissionId(
+    submissionId: string,
+    type: string,
+    severity: string,
+    rule: string,
+    file: string,
+    fileuuid: string,
+    page: number,
+    pageSize: number,
+  ): Promise<Issue> {
+    if (page < 1 || pageSize < 1) {
+      const tempPageSize = 20;
+      let data = await this.getIssuesBySubmissionId(
+        submissionId,
+        type,
+        severity,
+        rule,
+        file,
+        fileuuid,
+        1,
+        tempPageSize,
+      );
+
+      while (data.p * tempPageSize < data.total) {
+        data.p = data.p + 1;
+        const tempData = await this.getIssuesBySubmissionId(
+          submissionId,
+          type,
+          severity,
+          rule,
+          file,
+          fileuuid,
+          data.p,
+          tempPageSize,
+        );
+        data.issues = [...data.issues, ...tempData.issues];
+
+        const newComponents = [];
+        for (let tempComponent of tempData.components) {
+          let isExist = false;
+          for (let component of data.components) {
+            if (component.key == tempComponent.key) {
+              isExist = true;
+              break;
+            }
+          }
+
+          if (!isExist) {
+            newComponents.push(tempComponent);
+          }
+        }
+        data.components = [...data.components, ...newComponents];
+
+        const newRules = [];
+        for (let tempRule of tempData.rules) {
+          let isExist = false;
+          for (let rule of data.rules) {
+            if (rule.key == tempRule.key) {
+              isExist = true;
+              break;
+            }
+          }
+
+          if (!isExist) {
+            newRules.push(tempRule);
+          }
+        }
+        data.rules = [...data.rules, ...newRules];
+      }
+
+      data.p = 1;
+      data.ps = data.total;
+
+      return data;
+    } else {
+      return await this.getIssuesBySubmissionId(
+        submissionId,
+        type,
+        severity,
+        rule,
+        file,
+        fileuuid,
+        page,
+        pageSize,
+      );
+    }
+  }
 }

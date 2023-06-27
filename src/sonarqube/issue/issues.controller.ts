@@ -15,7 +15,7 @@ export class IssuesController {
   ): Promise<IssueResponse> {
     var result: IssueResponse;
     await this.issueService
-      .getIssuesBySubmissionId(
+      .getAllIssuesBySubmissionId(
         data.submissionId,
         data.type,
         data.severity,
