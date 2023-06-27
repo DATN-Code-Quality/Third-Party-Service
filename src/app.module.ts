@@ -24,6 +24,7 @@ import { TemporlClientModule } from './temporal/client.module';
 import { UserCourseReqDto } from './user-course/req/user-course-req.dto';
 import { UserReqDto } from './users/req/user-req.dto';
 import { UsersModule } from './users/users.module';
+import { ComponentModule } from './sonarqube/component/component.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { UsersModule } from './users/users.module';
     SourcesModule,
     RuleModule,
     ResultModule,
+    ComponentModule,
     QualityGatesModule,
     TemporlClientModule,
     MoodleModule,
