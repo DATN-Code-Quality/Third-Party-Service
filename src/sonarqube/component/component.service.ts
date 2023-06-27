@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { ProjectService } from 'src/project/project.service';
-import { Component, Components } from '../Component/interfaces/Component';
 import { PROJECT_TYPE } from 'src/project/req/project-req.dto';
+import { Components } from './interfaces/Component';
 import { IssuesService } from '../issue/issues.service';
 
 @Injectable()
