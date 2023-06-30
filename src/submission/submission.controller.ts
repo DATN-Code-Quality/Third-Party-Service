@@ -51,6 +51,9 @@ export class SubmissionController {
     data.updatedAt = new Date(data.timemodified.toString().replace('T', ' '));
 
     this.service.scanCodes(data as any).then(async (result) => {
+      if (result.error == '1') {
+        return null;
+      }
       const user = await this.usersDBService.findOne(UserResDto, data.userId);
       const assignment = await this.assignmentDBService.findOne(
         AssignmentResDto,

@@ -8,5 +8,6 @@ import { ProjectModule } from 'src/project/project.module';
   imports: [HttpModule, ProjectModule],
   controllers: [IssuesController],
   providers: [IssuesService],
+  exports: [IssuesService],
 })
 export class IssuesModule {}

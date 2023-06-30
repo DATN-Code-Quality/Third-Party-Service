@@ -15,7 +15,7 @@ export class ComponentController {
   ): Promise<ComponentResponse> {
     var result: ComponentResponse;
     await this.componentService
-      .getComponentsBySubmissionId(data.submissionId, data.page, data.pageSize)
+      .getComponentsBySubmissionId(data.submissionId)
       .then((component) => {
         if (component) {
           result = {

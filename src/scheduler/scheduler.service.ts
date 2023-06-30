@@ -188,6 +188,9 @@ export class SchedulerService {
 
             //     submission.userId,
             //   );
+            if (rs.error == 1) {
+              return ret;
+            }
             const findAssignment = await this.assignmentDBService.findOne(
               AssignmentResDto,
               ret.assignmentId,
