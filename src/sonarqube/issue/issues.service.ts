@@ -103,7 +103,7 @@ export class IssuesService {
     pageSize: number,
   ): Promise<Issue> {
     if (page < 1 || pageSize < 1) {
-      const tempPageSize = 20;
+      const tempPageSize = 500;
       let data = await this.getIssuesBySubmissionId(
         submissionId,
         type,
