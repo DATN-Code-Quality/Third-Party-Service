@@ -25,7 +25,10 @@ export class SourcesService {
       return null;
     }
 
-    if (project.type === PROJECT_TYPE.C_CPP) {
+    if (
+      project.type === PROJECT_TYPE.C_CPP ||
+      project.type === PROJECT_TYPE.C
+    ) {
       url = process.env.SONARCLOUD_URL;
     } else {
       url = process.env.SONARQUBE_BASE_URL;
