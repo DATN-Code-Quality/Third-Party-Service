@@ -33,7 +33,10 @@ export class IssuesService {
     let params = null;
     let auth = null;
 
-    if (project.type === PROJECT_TYPE.C_CPP) {
+    if (
+      project.type === PROJECT_TYPE.C_CPP ||
+      project.type === PROJECT_TYPE.C
+    ) {
       url = process.env.SONARCLOUD_URL;
       params = {
         componentKeys: project.key,
