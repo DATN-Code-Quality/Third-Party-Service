@@ -35,11 +35,11 @@ export class CourseReqDto extends BaseEntity {
   endAt: Date;
 
   // @IsString()
-  @Column('varchar', { name: 'detail', nullable: true, length: 255 })
+  @Column('varchar', { name: 'detail', nullable: true, length: 5000 })
   detail: string | null;
 
   // @IsString()
-  @Column('varchar', { name: 'summary', nullable: true, length: 255 })
+  @Column('varchar', { name: 'summary', nullable: true, length: 5000 })
   summary: string | null;
 
   // @IsString()
